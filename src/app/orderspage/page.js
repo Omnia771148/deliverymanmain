@@ -41,6 +41,37 @@ export default function AcceptedOrders() {
     fetchOrders();
   }, []);
 
+  // ✅ ACCEPT ORDER
+  const acceptOrder = async (orderId) => {
+    const deliveryBoyId = localStorage.getItem("userId");
+
+    if (!deliveryBoyId) {
+      alert("Login expired");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/acceptedorders/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, deliveryBoyId }),
+      });
+
+      if (!res.ok) {
+        alert("Order already accepted or failed");
+        return;
+      }
+
+      // remove order from list for this delivery boy
+      setOrders((prev) => prev.filter((o) => o._id !== orderId));
+      alert("Order accepted successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    }
+  };
+
+  // ❌ REJECT ORDER
   const rejectOrder = async (orderId) => {
     const deliveryBoyId = localStorage.getItem("userId");
 
@@ -55,7 +86,6 @@ export default function AcceptedOrders() {
       body: JSON.stringify({ orderId, deliveryBoyId }),
     });
 
-    // remove only for THIS delivery boy
     setOrders((prev) => prev.filter((o) => o._id !== orderId));
   };
 
@@ -83,8 +113,8 @@ export default function AcceptedOrders() {
           <p><b>Total Price:</b> ₹{order.totalPrice}</p>
           <p><b>Restaurant ID:</b> {order.restaurantId}</p>
           <p><b>Order Date:</b> {new Date(order.orderDate).toLocaleString()}</p>
-          <p><b>Rejected By:</b> {order.rejectedBy.join(", ") || "None"}</p>
-          <p><b>Restaurent location:                 </b>{order.rest}</p>
+          <p><b>Rejected By:</b> {order.rejectedBy?.join(", ") || "None"}</p>
+          <p><b>Restaurant location:</b> {order.rest}</p>
 
           <h4>Items</h4>
           {order.items.map((item, index) => (
@@ -92,16 +122,38 @@ export default function AcceptedOrders() {
               <p>• {item.name}</p>
               <p>Price: ₹{item.price}</p>
               <p>Quantity: {item.quantity}</p>
-              
             </div>
           ))}
 
-          <button
-            onClick={() => rejectOrder(order._id)}
-            style={{ marginTop: "10px", padding: "5px 10px" }}
-          >
-            Reject
-          </button>
+          {/* ✅ BUTTONS */}
+          <div style={{ marginTop: "10px" }}>
+            <button
+              onClick={() => acceptOrder(order._id)}
+              style={{
+                padding: "6px 12px",
+                marginRight: "10px",
+                backgroundColor: "green",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Accept
+            </button>
+
+            <button
+              onClick={() => rejectOrder(order._id)}
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "red",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Reject
+            </button>
+          </div>
         </div>
       ))}
     </div>

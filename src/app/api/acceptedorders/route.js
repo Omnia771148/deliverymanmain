@@ -6,12 +6,12 @@ export async function GET(req) {
   try {
     await connectionToDatabase();
 
-    const deliveryBoyId =
-      req.nextUrl.searchParams.get("deliveryBoyId");
+    const deliveryBoyId = req.nextUrl.searchParams.get("deliveryBoyId");
 
-    const query = deliveryBoyId
-      ? { "items.rejectedBy": { $ne: deliveryBoyId } }
-      : {};
+    const query = {
+      status: { $ne: "Accepted by Delivery" }, // ✅ filter out accepted by delivery
+      ...(deliveryBoyId && { "items.rejectedBy": { $ne: deliveryBoyId } }), // keep your existing logic
+    };
 
     const orders = await AcceptedOrder.find(query);
 
