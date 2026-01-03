@@ -1,22 +1,43 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
+// 1. IMPORT YOUR LOADING COMPONENT
+import Loading from "../../loading/page"; 
 
 export default function Login() {
-  const [users, setUsers] = useState([]); // This expects an Array
+  const [users, setUsers] = useState([]); 
   const [inputPhone, setInputPhone] = useState("");
   const [inputPassword, setInputPassword] = useState("");
   const [loggedInUserId, setLoggedInUserId] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // Added loading state
   const router = useRouter();
 
-  // 1. Fetch ALL users when page loads
   useEffect(() => {
+    
+    const loggedInUser = localStorage.getItem("userId");
+    const loginTime = localStorage.getItem("loginTimestamp");
+
+    if (loggedInUser && loginTime) {
+        const currentTime = new Date().getTime();
+        const oneDayInMs = 1 * 24 * 60 * 60 * 1000;
+
+        // CHANGED: Now comparing against oneDayInMs instead of sevenDays
+        if (currentTime - loginTime < oneDayInMs) {
+            window.location.href = "/orderspage";
+            return; 
+        } else {
+            // Optional: Clear storage if the 1 day has passed
+            localStorage.removeItem("userId");
+            localStorage.removeItem("loginTimestamp");
+        }
+    }
+
+    
     const fetchUsers = async () => {
       try {
         const res = await fetch("/api/deliveryboy/login"); 
         const data = await res.json();
         
-        // Safety check: ensure 'data' is actually an array before setting it
         if (Array.isArray(data)) {
             setUsers(data);
         } else {
@@ -25,6 +46,8 @@ export default function Login() {
       } catch (err) {
         console.error(err);
         alert("Failed to fetch users");
+      } finally {
+        setIsLoading(false); // Stop loading after fetch
       }
     };
 
@@ -40,23 +63,26 @@ export default function Login() {
       return;
     }
 
-    // 2. Client-side validation (The Old Method)
-    // NOTE: This will only work if you stored passwords as Plain Text.
-    // If you used bcrypt in signup, this check will fail (because "123" !== "$2b$10...").
     const matchedUser = users.find(
       (user) => user.phone === inputPhone && user.password === inputPassword
     );
 
     if (matchedUser) {
       localStorage.setItem("userId", matchedUser._id);
+      localStorage.setItem("loginTimestamp", new Date().getTime().toString());
+      
       setLoggedInUserId(matchedUser._id);
       alert("Login successful!");
-      window.location.href= "/orderspage"
-      // router.push("/dashboard");
+      window.location.href = "/orderspage";
     } else {
       alert("Incorrect phone or password");
     }
   };
+
+  // 2. DISPLAY LOADING COMPONENT
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div style={{ padding: "20px", maxWidth: "400px", margin: "50px auto" }}>
@@ -79,9 +105,15 @@ export default function Login() {
 
       <button
         onClick={handleLogin}
-        style={{ padding: "10px 20px", marginTop: "10px" }}
+        style={{ padding: "10px 20px", marginTop: "10px", cursor: "pointer" }}
       >
         Login
+      </button>
+      <button
+        onClick={() => window.location.href = "/deliveryboy/signup"}
+        style={{ padding: "10px 20px", marginTop: "10px", cursor: "pointer" }}
+      >
+       signup
       </button>
 
       {loggedInUserId && (

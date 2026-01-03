@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import Loading from "../loading/page"; 
+import AuthWrapper from "../components/AuthWrapper";
 
 export default function AcceptedOrders() {
   const [orders, setOrders] = useState([]);
@@ -119,8 +121,9 @@ export default function AcceptedOrders() {
       <div className="text-lg">Loading orders...</div>
     </div>
   );
-
+ if (loading) return <Loading />;
   return (
+    <AuthWrapper>
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
@@ -402,5 +405,6 @@ export default function AcceptedOrders() {
         )}
       </div>
     </div>
+    </AuthWrapper>
   );
 }

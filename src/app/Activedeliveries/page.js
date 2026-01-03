@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Loading from "../loading/page"; 
 
 export default function ActiveDeliveriesPage() {
   const [deliveries, setDeliveries] = useState([]);
@@ -75,7 +76,7 @@ export default function ActiveDeliveriesPage() {
   if (!deliveryBoyId) {
     return <div>Please login to view deliveries. No delivery boy ID found.</div>;
   }
-
+  if (loading) return <Loading />;
   return (
     <div>
       <h1>Accepted Deliveries</h1>
