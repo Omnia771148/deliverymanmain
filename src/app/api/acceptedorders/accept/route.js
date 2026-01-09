@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose"; // Import mongoose
-import connectionToDatabase from "../../../../lib/db";
-import AcceptedByDelivery from "../../../../models/AcceptedByDelivery";
-// ✅ Add OrderStatus model definition
+import mongoose from "mongoose";
+import connectionToDatabase from "../../../../../lib/db";
+import AcceptedOrder from "../../../../../models/AcceptedOrder";
+import AcceptedByDelivery from "../../../../../models/AcceptedByDelivery";
+
 const OrderStatus =
   mongoose.models.OrderStatus ||
   mongoose.model(
@@ -11,137 +12,81 @@ const OrderStatus =
     "orderstatuses"
   );
 
-export async function GET(req) {
-  try {
-    await connectionToDatabase();
-
-    // Get query parameters
-    const url = new URL(req.url);
-    const deliveryBoyId = url.searchParams.get("deliveryBoyId");
-
-    let query = {};
-   
-    // If deliveryBoyId is provided in query, filter by it
-    if (deliveryBoyId) {
-      query.deliveryBoyId = deliveryBoyId;
-    }
-
-    // Execute query with or without filter
-    const deliveries = await AcceptedByDelivery.find(query)
-      .sort({ acceptedAt: -1 })
-      .lean();
-
-      return NextResponse.json({
-      success: true,
-      data: deliveries,
-      count: deliveries.length,
-    });
-  } catch (error) {
-    console.error("Fetch deliveries error:", error);
-   
-    // Return both error messages from both codes
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Internal server error",
-        message2: "Error fetching data"
-      },
-      { status: 500 }
-    );
-  }
-}
-
 export async function POST(req) {
   try {
     await connectionToDatabase();
-   
-    const body = await req.json();
-    const { orderId, deliveryBoyId } = body;
+
+    const { orderId, deliveryBoyId } = await req.json();
 
     if (!orderId || !deliveryBoyId) {
       return NextResponse.json(
-        { success: false, message: "Order ID and Delivery Boy ID are required" },
-        { status: 400 }
-      );
-    }
-    // 1. Check if the boy is busy
-    const boyIsBusy = await AcceptedByDelivery.findOne({
-      deliveryBoyId: deliveryBoyId,
-      status: { $ne: "Delivered" }
-    });
-
-    if (boyIsBusy) {
-      return NextResponse.json(
-        { success: false, message: "You already have an active delivery!" },
+        { message: "Missing fields" },
         { status: 400 }
       );
     }
 
-    // 2. Check if order is already accepted (ADDED THIS CHECK)
-    const orderAlreadyAccepted = await AcceptedByDelivery.findOne({
-      orderId: orderId
-    });
+    // 1️⃣ Find order from acceptedorders (YOUR EXISTING LOGIC)
+    const order = await AcceptedOrder.findById(orderId);
 
-    if (orderAlreadyAccepted) {
+    if (!order) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "Too late! Another delivery boy just accepted this order."
-        },
-        { status: 409 }
+        { message: "Order not found" },
+        { status: 404 }
       );
     }
 
-    // 3. Try to save the order
-    try {
-      const newAcceptedOrder = new AcceptedByDelivery({
-        ...body,
-        acceptedAt: new Date(),
-        status: "Accepted by Delivery"
-      });
+    // 2️⃣ Insert into acceptedbydeliveries (YOUR EXISTING LOGIC - UNCHANGED)
+    await AcceptedByDelivery.create({
+      originalOrderId: order._id,
+      orderId: order.orderId,
+      deliveryBoyId,
 
-      // This triggers the Unique Index wall
-      await newAcceptedOrder.save();
+      userId: order.userId,
+      restaurantId: order.restaurantId,
 
-      // ✅ NEW: Update OrderStatus collection
-      await OrderStatus.updateOne(
-        { orderId: orderId },
-        {
-          $set: {
-            status: "will be delivered soon" // Update status in orderstatuses
-          }
+      items: order.items,
+      totalCount: order.totalCount,
+      totalPrice: order.totalPrice,
+      gst: order.gst,
+      deliveryCharge: order.deliveryCharge,
+      grandTotal: order.grandTotal,
+      aa: order.aa,
+
+      location: order.location,
+
+      paymentStatus: order.paymentStatus,
+      razorpayOrderId: order.razorpayOrderId,
+      razorpayPaymentId: order.razorpayPaymentId,
+
+      orderDate: order.orderDate,
+      rest: order.rest,
+      rejectedBy: order.rejectedBy,
+
+      status: "Accepted by Delivery", // YOUR EXISTING STATUS - UNCHANGED
+    });
+
+    // ✅ 3️⃣ ONLY ADD THIS: Update orderstatuses collection (NEW ADDITION)
+    await OrderStatus.updateOne(
+      { orderId: order.orderId },
+      {
+        $set: {
+          status: "will be delivered soon" // ONLY CHANGE STATUS HERE
         }
-      );
-
-      return NextResponse.json({
-        success: true,
-        message: "Order accepted successfully!"
-      });
-
-    } catch (dbError) {
-      // ✅ FIX: Catch the 11000 Duplicate error and return "Too Late"
-      if (dbError.code === 11000) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: "Too late! Another delivery boy just accepted this order."
-          },
-          { status: 409 } // Conflict Status
-        );
       }
-     
-      // If it's another DB error, return a specific message
-      return NextResponse.json(
-        { success: false, message: "Database rejected the order." },
-        { status: 500 }
-      );
-    }
+    );
+
+    // 4️⃣ DELETE from acceptedorders (YOUR EXISTING LOGIC - UNCHANGED)
+    await AcceptedOrder.findByIdAndDelete(orderId);
+
+    return NextResponse.json({
+      message: "Order accepted and removed from acceptedorders",
+      success: true,
+    });
 
   } catch (error) {
-    // ✅ FIX: Handle the outer catch block
-    console.error("Server Logic Error:", error);
+    console.error("Accept order error:", error);
     return NextResponse.json(
-      { success: false, message: "Server connection error." },
+      { message: "Internal server error", error: error.message },
       { status: 500 }
     );
   }
