@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose"; // Import mongoose
 import connectionToDatabase from "../../../../lib/db";
 import AcceptedByDelivery from "../../../../models/AcceptedByDelivery";
+// ✅ Add OrderStatus model definition
+const OrderStatus =
+  mongoose.models.OrderStatus ||
+  mongoose.model(
+    "OrderStatus",
+    new mongoose.Schema({}, { strict: false }),
+    "orderstatuses"
+  );
 
 export async function GET(req) {
   try {
@@ -22,7 +31,7 @@ export async function GET(req) {
       .sort({ acceptedAt: -1 })
       .lean();
 
-    return NextResponse.json({
+      return NextResponse.json({
       success: true,
       data: deliveries,
       count: deliveries.length,
@@ -55,7 +64,6 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-
     // 1. Check if the boy is busy
     const boyIsBusy = await AcceptedByDelivery.findOne({
       deliveryBoyId: deliveryBoyId,
@@ -68,7 +76,8 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-  // 2. Check if order is already accepted (ADDED THIS CHECK)
+
+    // 2. Check if order is already accepted (ADDED THIS CHECK)
     const orderAlreadyAccepted = await AcceptedByDelivery.findOne({
       orderId: orderId
     });
@@ -93,6 +102,16 @@ export async function POST(req) {
 
       // This triggers the Unique Index wall
       await newAcceptedOrder.save();
+
+      // ✅ NEW: Update OrderStatus collection
+      await OrderStatus.updateOne(
+        { orderId: orderId },
+        {
+          $set: {
+            status: "will be delivered soon" // Update status in orderstatuses
+          }
+        }
+      );
 
       return NextResponse.json({
         success: true,
