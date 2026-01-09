@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Loading from "../loading/page"; 
 import AuthWrapper from "../components/AuthWrapper";
 
@@ -11,15 +11,22 @@ export default function AcceptedOrders() {
   // LOGIC FROM FIRST: State to track if driver is already busy
   const [hasActiveDelivery, setHasActiveDelivery] = useState(false);
   
-  // LOGIC FROM SECOND: track active status
-  const [isActive, setIsActive] = useState(true);
+  // LOGIC FROM SECOND: track active status - ADDED localStorage initialization
+  const [isActive, setIsActive] = useState(() => {
+    // Initialize from localStorage if available
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("deliveryBoyActiveStatus");
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
 
   // ✅ FIXED LOGIC FROM FIRST: Define current user and check state here
   const currentUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
   const hasActiveOrder = orders.some(o => o.deliveryBoyId === currentUserId && o.status !== "Delivered");
 
-  // FIRST CODE'S fetchOrders function
-  const fetchOrders = async () => {
+  // FIRST CODE'S fetchOrders function - ADDED active status preservation
+  const fetchOrders = useCallback(async () => {
     try {
       const deliveryBoyId = localStorage.getItem("userId");
 
@@ -69,10 +76,10 @@ export default function AcceptedOrders() {
       setFilteredOrders([]);
       setLoading(false);
     }
-  };
+  }, []);
 
-  // SECOND CODE'S fetchOrdersAndStatus function
-  const fetchOrdersAndStatus = async () => {
+  // SECOND CODE'S fetchOrdersAndStatus function - MODIFIED to use localStorage
+  const fetchOrdersAndStatus = useCallback(async () => {
     try {
       const deliveryBoyId = localStorage.getItem("userId");
 
@@ -84,23 +91,32 @@ export default function AcceptedOrders() {
         return;
       }
 
-      // Try to fetch active status first, but don't fail if API doesn't exist
+      // Try to fetch active status first
       try {
         const statusRes = await fetch(
           `/api/delivery/status?deliveryBoyId=${deliveryBoyId}`
         );
         if (statusRes.ok) {
           const statusData = await statusRes.json();
-          setIsActive(statusData.isActive);
-        } else {
-          // If API returns error, default to active status
-          console.warn("Status API returned error, defaulting to active");
-          setIsActive(true);
+          // CHECK: Only update if localStorage doesn't have a newer value
+          const savedStatus = localStorage.getItem("deliveryBoyActiveStatus");
+          if (savedStatus !== null) {
+            const savedStatusValue = JSON.parse(savedStatus);
+            // Only update if saved status matches API value
+            if (savedStatusValue === statusData.isActive) {
+              setIsActive(statusData.isActive);
+            }
+            // If they differ, keep the localStorage value (user's recent choice)
+          } else {
+            // No saved status, use API value
+            setIsActive(statusData.isActive);
+            localStorage.setItem("deliveryBoyActiveStatus", JSON.stringify(statusData.isActive));
+          }
         }
+        // If API fails, keep current state - don't change anything
       } catch (err) {
-        // If fetch completely fails, default to active and continue
-        console.warn("Could not fetch status, defaulting to active:", err.message);
-        setIsActive(true);
+        // If fetch fails, keep current state
+        console.warn("Could not fetch status, keeping current:", err.message);
       }
 
       // LOGIC FROM FIRST: Call your Accepted Deliveries API
@@ -146,28 +162,23 @@ export default function AcceptedOrders() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // FIRST CODE'S useEffect with polling
+  // FIRST CODE'S useEffect with polling - MODIFIED to use fetchOrdersAndStatus
   useEffect(() => {
-    // Initial fetch using first code's approach
-    fetchOrders();
+    // Initial fetch using second code's approach (includes status)
+    fetchOrdersAndStatus();
 
-    // Set up polling every 3 seconds
+    // Set up polling every 3 seconds - MODIFIED to use fetchOrdersAndStatus
     const intervalId = setInterval(() => {
-      fetchOrders();
+      fetchOrdersAndStatus();
     }, 3000);
 
     // Cleanup function to clear interval when component unmounts
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
-
-  // SECOND CODE'S useEffect without polling
-  useEffect(() => {
-    fetchOrdersAndStatus();
-  }, []);
+  }, [fetchOrdersAndStatus]); // ADDED dependency
 
   // ✅ FIRST CODE'S ACCEPT ORDER
   const acceptOrderFirst = async (orderId) => {
@@ -312,12 +323,17 @@ export default function AcceptedOrders() {
     setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
   };
 
+  // MODIFIED toggleActiveStatus to save to localStorage - REMOVED ALERTS
   const toggleActiveStatus = async () => {
     const deliveryBoyId = localStorage.getItem("userId");
     if (!deliveryBoyId) return;
 
     const newStatus = !isActive;
 
+    // CRITICAL: Update state and localStorage IMMEDIATELY
+    setIsActive(newStatus);
+    localStorage.setItem("deliveryBoyActiveStatus", JSON.stringify(newStatus));
+    
     try {
       const res = await fetch("/api/delivery/status", {
         method: "POST",
@@ -329,22 +345,19 @@ export default function AcceptedOrders() {
       });
 
       if (res.ok) {
-        setIsActive(newStatus);
-        // Show immediate feedback
-        alert(`You are now ${newStatus ? 'Active' : 'Inactive'}!`);
-        
+        // Success - no alert needed, UI already updated
         // If going active, refresh orders
         if (newStatus) {
-          fetchOrders();
+          fetchOrdersAndStatus();
         }
       } else {
-        alert("Failed to update status - API error");
+        // API failed but local state is already updated
+        console.warn("API update failed but local status changed");
+        // No alert
       }
     } catch (err) {
       console.error("Status update failed:", err);
-      // Even if API fails, update UI locally
-      setIsActive(newStatus);
-      alert(`You are now ${newStatus ? 'Active' : 'Inactive'} (local only - check API)`);
+      // Local state already updated - no alert
     }
   };
 
@@ -710,6 +723,9 @@ export default function AcceptedOrders() {
                                 : (hasActiveDelivery || hasActiveOrder) 
                                   ? "Finish Active Order First" 
                                   : "Accept Delivery"}
+                            </button>
+                            <button>
+                              sai
                             </button>
                           </div>
                         </div>

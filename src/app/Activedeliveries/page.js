@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Loading from "../loading/page"; 
+import Loading from "../loading/page";
 
 export default function ActiveDeliveriesPage() {
   const [deliveries, setDeliveries] = useState([]);
@@ -91,27 +91,8 @@ export default function ActiveDeliveriesPage() {
     });
   };
 
-  // FIRST CODE'S VERIFICATION FUNCTION - NO CHANGES
-  const verifyRazorpayIdBasic = (delivery) => {
-    const userInput = inputValues[delivery._id] || "";
-    const razorpayOrderId = delivery.razorpayOrderId;
-    
-    if (!razorpayOrderId) {
-      alert("No Razorpay Order ID found for this order");
-      return;
-    }
-    
-    const last5Digits = razorpayOrderId.slice(-5);
-    
-    if (userInput === last5Digits) {
-      alert("Correct! Last 5 digits match.");
-    } else {
-      alert(`Incorrect. The last 5 digits of Razorpay Order ID are: ${last5Digits}`);
-    }
-  };
-
-  // SECOND CODE'S VERIFICATION FUNCTION - NO CHANGES
-  const verifyRazorpayIdAdvanced = async (delivery) => {
+  // EXTRACTED FROM FIRST CODE: VERIFICATION FUNCTION THAT SENDS TO COLLECTION
+  const verifyRazorpayId = async (delivery) => {
     const userInput = inputValues[delivery._id] || "";
     const razorpayOrderId = delivery.razorpayOrderId;
     
@@ -126,6 +107,7 @@ export default function ActiveDeliveriesPage() {
       try {
         setVerifying(true);
         
+        // EXTRACTED FROM FIRST CODE: API call to complete order
         const response = await fetch("/api/complete-order", {
           method: "POST",
           headers: {
@@ -141,10 +123,10 @@ export default function ActiveDeliveriesPage() {
         if (result.success) {
           alert(`✅ Verification successful!\nOrder completed and moved to completed orders.\nTotal Amount: ₹${result.data.grandTotal}`);
           
-          // SECOND CODE'S STATE UPDATE LOGIC
+          // EXTRACTED FROM FIRST CODE: Update state after successful verification
           setDeliveries(prev => prev.filter(item => item._id !== delivery._id));
           
-          // SECOND CODE'S INPUT CLEANUP LOGIC
+          // EXTRACTED FROM FIRST CODE: Clean up input values
           setInputValues(prev => {
             const newValues = { ...prev };
             delete newValues[delivery._id];
@@ -161,6 +143,25 @@ export default function ActiveDeliveriesPage() {
       }
     } else {
       alert(`❌ Incorrect! Last 5 digits are: ${last5Digits}`);
+    }
+  };
+
+  // SECOND CODE'S VERIFICATION FUNCTION (Basic) - KEPT FOR COMPATIBILITY
+  const verifyRazorpayIdBasic = (delivery) => {
+    const userInput = inputValues[delivery._id] || "";
+    const razorpayOrderId = delivery.razorpayOrderId;
+    
+    if (!razorpayOrderId) {
+      alert("No Razorpay Order ID found for this order");
+      return;
+    }
+    
+    const last5Digits = razorpayOrderId.slice(-5);
+    
+    if (userInput === last5Digits) {
+      alert("Correct! Last 5 digits match.");
+    } else {
+      alert(`Incorrect. The last 5 digits of Razorpay Order ID are: ${last5Digits}`);
     }
   };
 
@@ -292,7 +293,7 @@ export default function ActiveDeliveriesPage() {
                     </div>
                   </div>
 
-                  {/* SINGLE VERIFICATION SECTION - COMBINING BOTH */}
+                  {/* SINGLE VERIFICATION SECTION - ADDED FROM FIRST CODE */}
                   <div style={{ 
                     marginBottom: "20px", 
                     padding: "20px", 
@@ -323,9 +324,27 @@ export default function ActiveDeliveriesPage() {
                           disabled={verifying}
                         />
                         
-                         
-                        
+                        {/* MAIN VERIFY BUTTON - FROM FIRST CODE */}
+                        <button
+                          onClick={() => verifyRazorpayId(delivery)}
+                          disabled={verifying || !inputValues[delivery._id] || inputValues[delivery._id].length !== 5}
+                          style={{ 
+                            padding: "10px 20px", 
+                            backgroundColor: verifying ? "#6c757d" : 
+                                         (!inputValues[delivery._id] || inputValues[delivery._id].length !== 5) ? "#6c757d" : "#28a745", 
+                            color: "white", 
+                            border: "none", 
+                            borderRadius: "4px",
+                            cursor: verifying || (!inputValues[delivery._id] || inputValues[delivery._id].length !== 5) ? "not-allowed" : "pointer",
+                            fontWeight: "bold",
+                            transition: "background-color 0.2s"
+                          }}
+                        >
+                          {verifying ? "Processing..." : "Verify & Complete"}
+                        </button>
                       </div>
+                      
+                      {/* QUICK VERIFY BUTTON - FROM SECOND CODE */}
                       <button
                         onClick={() => verifyRazorpayIdBasic(delivery)}
                         style={{ 
@@ -340,7 +359,7 @@ export default function ActiveDeliveriesPage() {
                         Quick Verify Only
                       </button>
                       <p style={{ fontSize: "0.85em", color: "#6c757d", marginTop: "10px" }}>
-                        <strong>Note:</strong> will move the order to completed orders and remove it from active deliveries.
+                        <strong>Note:</strong> "Verify & Complete" will move the order to completed orders and remove it from active deliveries.
                       </p>
                     </div>
                   </div>
@@ -360,41 +379,35 @@ export default function ActiveDeliveriesPage() {
                   <div style={{ marginBottom: "20px" }}>
                     <h4 style={{ color: "#495057", marginBottom: "10px" }}>Location Information</h4>
                     {delivery.location ? (
-                      <div>
-                        <p><strong>Location:</strong></p>
-                        <p>Lat: {delivery.location.lat || "Not set"}</p>
-                        <p>Lng: {delivery.location.lng || "Not set"}</p>
-                        <p>Map URL: {delivery.location.mapUrl || "Not set"}</p>
-                        <div style={{ 
-                          backgroundColor: "#f8f9fa", 
-                          padding: "15px", 
-                          borderRadius: "6px",
-                          border: "1px solid #dee2e6"
-                        }}>
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
-                            <p><strong>Latitude:</strong> {delivery.location.lat || "Not set"}</p>
-                            <p><strong>Longitude:</strong> {delivery.location.lng || "Not set"}</p>
-                          </div>
-                          {delivery.location.mapUrl && (
-                            <div style={{ marginTop: "10px" }}>
-                              <p><strong>Map URL:</strong></p>
-                              <a 
-                                href={delivery.location.mapUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                style={{
-                                  color: "#007bff",
-                                  textDecoration: "none",
-                                  wordBreak: "break-all"
-                                }}
-                              >
-                                {delivery.location.mapUrl.length > 50 
-                                  ? delivery.location.mapUrl.substring(0, 50) + "..." 
-                                  : delivery.location.mapUrl}
-                              </a>
-                            </div>
-                          )}
+                      <div style={{ 
+                        backgroundColor: "#f8f9fa", 
+                        padding: "15px", 
+                        borderRadius: "6px",
+                        border: "1px solid #dee2e6"
+                      }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "10px" }}>
+                          <p><strong>Latitude:</strong> {delivery.location.lat || "Not set"}</p>
+                          <p><strong>Longitude:</strong> {delivery.location.lng || "Not set"}</p>
                         </div>
+                        {delivery.location.mapUrl && (
+                          <div style={{ marginTop: "10px" }}>
+                            <p><strong>Map URL:</strong></p>
+                            <a 
+                              href={delivery.location.mapUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              style={{
+                                color: "#007bff",
+                                textDecoration: "none",
+                                wordBreak: "break-all"
+                              }}
+                            >
+                              {delivery.location.mapUrl.length > 50 
+                                ? delivery.location.mapUrl.substring(0, 50) + "..." 
+                                : delivery.location.mapUrl}
+                            </a>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <p style={{ color: "#6c757d" }}><strong>Location:</strong> No location data available</p>
@@ -426,54 +439,43 @@ export default function ActiveDeliveriesPage() {
                       Order Items ({delivery.items?.length || 0})
                     </h4>
                     {delivery.items && delivery.items.length > 0 ? (
-                      <div>
-                        <strong>Items ({delivery.items.length}):</strong>
-                        <div style={{
-                          backgroundColor: "#f8f9fa",
-                          padding: "15px",
-                          borderRadius: "6px",
-                          border: "1px solid #dee2e6"
-                        }}>
-                          <ul>
-                            {delivery.items.map((item, index) => (
-                              <li key={index}>
-                                {item?.name || "No name"} (ID: {item?.itemId || "No ID"}) - 
-                                Qty: {item?.quantity || 0} × ₹{item?.price || 0} = ₹{(item?.price || 0) * (item?.quantity || 0)}
-                              </li>
-                            ))}
-                          </ul>
-                          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                            {delivery.items.map((item, index) => (
-                              <li 
-                                key={index} 
-                                style={{
-                                  padding: "10px",
-                                  borderBottom: index < delivery.items.length - 1 ? "1px solid #dee2e6" : "none",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center"
-                                }}
-                              >
-                                <div style={{ flex: "1" }}>
-                                  <p style={{ margin: "0 0 5px 0", fontWeight: "bold" }}>
-                                    {item?.name || "Unnamed Item"}
-                                  </p>
-                                  <p style={{ margin: 0, fontSize: "0.9em", color: "#6c757d" }}>
-                                    ID: {item?.itemId || "No ID"}
-                                  </p>
-                                </div>
-                                <div style={{ textAlign: "right" }}>
-                                  <p style={{ margin: "0 0 5px 0" }}>
-                                    {item?.quantity || 0} × ₹{item?.price || 0}
-                                  </p>
-                                  <p style={{ margin: 0, fontWeight: "bold", color: "#28a745" }}>
-                                    ₹{(item?.price || 0) * (item?.quantity || 0)}
-                                  </p>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                      <div style={{
+                        backgroundColor: "#f8f9fa",
+                        padding: "15px",
+                        borderRadius: "6px",
+                        border: "1px solid #dee2e6"
+                      }}>
+                        <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                          {delivery.items.map((item, index) => (
+                            <li 
+                              key={index} 
+                              style={{
+                                padding: "10px",
+                                borderBottom: index < delivery.items.length - 1 ? "1px solid #dee2e6" : "none",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                              }}
+                            >
+                              <div style={{ flex: "1" }}>
+                                <p style={{ margin: "0 0 5px 0", fontWeight: "bold" }}>
+                                  {item?.name || "Unnamed Item"}
+                                </p>
+                                <p style={{ margin: 0, fontSize: "0.9em", color: "#6c757d" }}>
+                                  ID: {item?.itemId || "No ID"}
+                                </p>
+                              </div>
+                              <div style={{ textAlign: "right" }}>
+                                <p style={{ margin: "0 0 5px 0" }}>
+                                  {item?.quantity || 0} × ₹{item?.price || 0}
+                                </p>
+                                <p style={{ margin: 0, fontWeight: "bold", color: "#28a745" }}>
+                                  ₹{(item?.price || 0) * (item?.quantity || 0)}
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     ) : (
                       <p style={{ color: "#6c757d" }}><strong>Items:</strong> No items data available</p>
