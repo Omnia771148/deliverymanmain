@@ -9,7 +9,8 @@ import Loading from "../../loading/page";
 export default function DeliveryBoySignup() {
   const [form, setForm] = useState({
     name: "", email: "", password: "", phone: "",
-    aadharNumber: "", rcNumber: "", licenseNumber: ""
+    aadharNumber: "", rcNumber: "", licenseNumber: "",
+    accountNumber: "", confirmAccountNumber: "", ifscCode: ""
   });
 
   const [selectedFiles, setSelectedFiles] = useState({
@@ -41,10 +42,24 @@ export default function DeliveryBoySignup() {
     e.preventDefault();
     setErrorMessage(""); // Clear previous errors
 
-    if (!form.phone.trim().startsWith("+")) {
-      alert("Please enter phone number with country code (e.g., +919876543210)");
+    // Bank Details Validation
+    if (!form.accountNumber || !form.confirmAccountNumber || !form.ifscCode) {
+      alert("Please fill in all bank details (Account Number & IFSC).");
       return;
     }
+
+    if (form.accountNumber !== form.confirmAccountNumber) {
+      alert("Account numbers do not match! Please check and try again.");
+      return;
+    }
+
+    // Phone validation: Check if it's exactly 10 digits
+    if (!/^\d{10}$/.test(form.phone)) {
+      alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    const formattedPhone = "+91" + form.phone;
 
     setIsSendingOtp(true); // Use local state, NOT global isSubmitting
     try {
@@ -68,7 +83,7 @@ export default function DeliveryBoySignup() {
         }
       });
 
-      const result = await signInWithPhoneNumber(auth, form.phone.trim(), window.recaptchaVerifier);
+      const result = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
       setConfirmationResult(result);
       setIsOtpSent(true);
       alert("OTP sent to your phone! Check your SMS.");
@@ -127,6 +142,7 @@ export default function DeliveryBoySignup() {
 
       const fileKeys = ["aadharUrl", "rcUrl", "licenseUrl"];
       for (const key of fileKeys) {
+
         const file = selectedFiles[key];
         // Disable web worker to avoid issues in some environments
         const options = { maxSizeMB: 0.1, maxWidthOrHeight: 800, useWebWorker: false, initialQuality: 0.5 };
@@ -145,7 +161,7 @@ export default function DeliveryBoySignup() {
       }
 
       // API CALL TO MONGODB
-      const finalFormData = { ...form, ...uploadResults, firebaseUid: firebaseUser.uid, phone: form.phone.trim() };
+      const finalFormData = { ...form, ...uploadResults, firebaseUid: firebaseUser.uid, phone: "+91" + form.phone };
       const res = await fetch("/api/deliveryboy/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -179,38 +195,130 @@ export default function DeliveryBoySignup() {
       )}
 
       <h2>Delivery Boy Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="name" placeholder="Name" onChange={handleChange} style={inputStyle} required />
-        <input name="email" placeholder="Email" onChange={handleChange} style={inputStyle} required />
-        <input name="phone" placeholder="Phone" onChange={handleChange} style={inputStyle} required />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} style={inputStyle} required />
-        
-        {[ 
-          { label: "Aadhar Card", field: "aadharUrl" },
-          { label: "RC Book", field: "rcUrl" },
-          { label: "Driving License", field: "licenseUrl" }
-        ].map((item) => (
-          <div key={item.field} style={uploadBox}>
-            <label style={{ fontSize: "14px", fontWeight: "bold" }}>{item.label}:</label>
-            <input 
-              type="file" accept="image/*" capture="environment" 
-              onChange={(e) => handleFileChange(e, item.field)} 
-              style={{ display: "block", marginTop: "5px" }}
-            />
-            {selectedFiles[item.field] && (
-              <span style={{ color: "blue", fontSize: "12px" }}>📍 File Selected</span>
-            )}
-          </div>
-        ))}
 
-        <button type="submit" style={btnStyle} disabled={isSubmitting}>
-          {isSubmitting ? "Uploading & Saving..." : "Signup"}
-        </button>
-      </form>
+      {!isOtpSent ? (
+        <form onSubmit={sendOtp}>
+          <input name="name" placeholder="Name" onChange={handleChange} style={inputStyle} required />
+
+          <div style={inputGroupStyle}>
+            <input
+              name="email"
+              placeholder="Email"
+              value={form.email.replace("@gmail.com", "")}
+              onChange={(e) => setForm({ ...form, email: e.target.value + "@gmail.com" })}
+              style={groupInputStyle}
+              required
+            />
+            <span style={suffixStyle}>@gmail.com</span>
+          </div>
+
+          <div style={inputGroupStyle}>
+            <span style={prefixStyle}>+91</span>
+            <input
+              name="phone"
+              type="tel"
+              placeholder="Mobile Number"
+              value={form.phone}
+              maxLength="10"
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setForm({ ...form, phone: val });
+              }}
+              style={groupInputStyle}
+              required
+            />
+          </div>
+
+          <input name="password" type="password" placeholder="Password" onChange={handleChange} style={inputStyle} required />
+
+          <div style={{ margin: "15px 0" }}>
+            <h3 style={{ fontSize: "16px", margin: "0 0 10px", color: "#333" }}>Bank Details</h3>
+            <input
+              name="accountNumber"
+              type="text"
+              placeholder="Account Number"
+              onChange={handleChange}
+              style={inputStyle}
+              required
+            />
+            <input
+              name="confirmAccountNumber"
+              type="text"
+              placeholder="Re-enter Account Number"
+              onChange={handleChange}
+              onPaste={(e) => e.preventDefault()} // Prevent pasting to ensure manual verification
+              style={inputStyle}
+              required
+            />
+            <input
+              name="ifscCode"
+              placeholder="IFSC Code"
+              onChange={(e) => setForm({ ...form, ifscCode: e.target.value.toUpperCase() })}
+              style={inputStyle}
+              maxLength="11"
+              required
+            />
+          </div>
+
+          {[
+            { label: "Aadhar Card", field: "aadharUrl", nameField: "aadharNumber" },
+            { label: "RC Book", field: "rcUrl", nameField: "rcNumber" },
+            { label: "Driving License", field: "licenseUrl", nameField: "licenseNumber" }
+          ].map((item) => (
+            <div key={item.field} style={uploadBox}>
+              <label style={{ fontSize: "14px", fontWeight: "bold" }}>{item.label}:</label>
+
+              <input
+                name={item.nameField}
+                placeholder={`Number on ${item.label}`}
+                onChange={handleChange}
+                style={{ ...inputStyle, marginTop: "5px" }}
+                required
+              />
+
+              <input
+                type="file" accept="image/*" capture="environment"
+                onChange={(e) => handleFileChange(e, item.field)}
+                style={{ display: "block", marginTop: "5px" }}
+              />
+            </div>
+          ))}
+          <button type="submit" style={btnStyle} disabled={isSendingOtp}>
+            {isSendingOtp ? "Sending OTP..." : "Send OTP to Register"}
+          </button>
+        </form>
+      ) : (
+        <div style={uploadBox}>
+          <label>Enter 6-digit OTP sent to {form.phone}</label>
+          <input
+            type="text"
+            placeholder="000000"
+            onChange={(e) => setOtp(e.target.value)}
+            style={inputStyle}
+          />
+          <button onClick={handleSubmit} style={btnStyle} disabled={isSubmitting}>
+            {isSubmitting ? "Processing..." : "Verify OTP & Complete Signup"}
+          </button>
+          <button onClick={() => setIsOtpSent(false)} style={{ ...btnStyle, background: "#ccc", marginTop: "10px" }}>
+            Edit Phone Number
+          </button>
+        </div>
+      )}
+
+      <div style={{ marginTop: "30px", fontSize: "12px", color: "#666", textAlign: "center" }}>
+        <p>Debug Info:</p>
+        <p>Hostname: <strong suppressHydrationWarning>{typeof window !== 'undefined' ? window.location.hostname : 'loading...'}</strong></p>
+        <p>Ensure this hostname is added to Firebase Console &gt; Auth &gt; Settings &gt; Authorized Domains</p>
+      </div>
     </div>
   );
 }
 
 const inputStyle = { width: "100%", padding: "10px", marginBottom: "10px", boxSizing: "border-box", borderRadius: "4px", border: "1px solid #ccc" };
+const inputGroupStyle = { display: "flex", alignItems: "center", marginBottom: "10px", border: "1px solid #ccc", borderRadius: "4px", background: "#fff", overflow: "hidden" };
+const prefixStyle = { background: "#eee", padding: "10px 10px", borderRight: "1px solid #ccc", color: "#555", fontWeight: "bold", whiteSpace: "nowrap" };
+const suffixStyle = { background: "#eee", padding: "10px 10px", borderLeft: "1px solid #ccc", color: "#555", fontWeight: "bold", whiteSpace: "nowrap", fontSize: "14px" };
+const groupInputStyle = { flex: 1, padding: "10px", border: "none", outline: "none", minWidth: 0 };
+
 const uploadBox = { marginBottom: "15px", padding: "12px", background: "#fefefe", borderRadius: "8px", border: "1px solid #eee", boxShadow: "0 2px 4px rgba(0,0,0,0.05)" };
 const btnStyle = { width: "100%", padding: "12px", background: "#0070f3", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" };

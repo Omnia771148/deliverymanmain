@@ -15,6 +15,8 @@ const deliveryBoySchema = new mongoose.Schema(
     rcNumber: { type: String, required: true }, // Number on RC
     licenseUrl: { type: String, required: true },
     licenseNumber: { type: String, required: true }, // Number on License
+    accountNumber: { type: String, required: true },
+    ifscCode: { type: String, required: true },
     isActive: { type: Boolean, default: true },
   },
   {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectionToDatabase from "../../../../../lib/db";
 import DeliveryBoyUser from "../../../../../models/DeliveryBoyUser";
+import DeliveryBoyNewAdd from "../../../../../models/DeliveryBoyNewAdd";
 
 export async function POST(req) {
   try {
@@ -16,14 +17,18 @@ export async function POST(req) {
       rcUrl,
       rcNumber,
       licenseUrl,
-      licenseNumber
+      licenseNumber,
+      accountNumber,
+      ifscCode
     } = await req.json();
 
     // 2. Updated Validation (Ensure docs and firebaseUid are present)
     if (!name || !email || !password || !phone || !firebaseUid ||
       !aadharUrl || !aadharNumber ||
       !rcUrl || !rcNumber ||
-      !licenseUrl || !licenseNumber) {
+      !rcUrl || !rcNumber ||
+      !licenseUrl || !licenseNumber ||
+      !accountNumber || !ifscCode) {
       return NextResponse.json(
         { message: "All fields, documents, and document numbers are required" },
         { status: 400 }
@@ -32,20 +37,24 @@ export async function POST(req) {
 
     await connectionToDatabase();
 
-    // 3. Check if email, phone, OR firebaseUid already exists
-    const userExists = await DeliveryBoyUser.findOne({
+    // 3. Check if email, phone, OR firebaseUid already exists in EITHER collection
+    const existingUser = await DeliveryBoyUser.findOne({
       $or: [{ email }, { phone }, { firebaseUid }],
     });
 
-    if (userExists) {
+    const pendingUser = await DeliveryBoyNewAdd.findOne({
+      $or: [{ email }, { phone }, { firebaseUid }],
+    });
+
+    if (existingUser || pendingUser) {
       return NextResponse.json(
         { message: "User already exists with this email, phone, or Firebase ID" },
         { status: 409 }
       );
     }
 
-    // 4. Create the full user profile in MongoDB
-    await DeliveryBoyUser.create({
+    // 4. Create the full user profile in MongoDB (New Collection)
+    await DeliveryBoyNewAdd.create({
       name,
       email,
       password, // Plain text as requested
@@ -57,6 +66,8 @@ export async function POST(req) {
       rcNumber,
       licenseUrl,
       licenseNumber,
+      accountNumber,
+      ifscCode,
     });
 
     return NextResponse.json(
