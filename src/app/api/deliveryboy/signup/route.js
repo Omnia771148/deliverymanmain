@@ -5,21 +5,27 @@ import DeliveryBoyUser from "../../../../../models/DeliveryBoyUser";
 export async function POST(req) {
   try {
     // 1. Destructure ALL incoming fields including Firebase UID and Image URLs
-    const { 
-      name, 
-      email, 
-      password, 
-      phone, 
-      firebaseUid, 
-      aadharUrl, 
-      rcUrl, 
-      licenseUrl 
+    const {
+      name,
+      email,
+      password,
+      phone,
+      firebaseUid,
+      aadharUrl,
+      aadharNumber,
+      rcUrl,
+      rcNumber,
+      licenseUrl,
+      licenseNumber
     } = await req.json();
 
     // 2. Updated Validation (Ensure docs and firebaseUid are present)
-    if (!name || !email || !password || !phone || !firebaseUid || !aadharUrl || !rcUrl || !licenseUrl) {
+    if (!name || !email || !password || !phone || !firebaseUid ||
+      !aadharUrl || !aadharNumber ||
+      !rcUrl || !rcNumber ||
+      !licenseUrl || !licenseNumber) {
       return NextResponse.json(
-        { message: "All fields and documents are required" },
+        { message: "All fields, documents, and document numbers are required" },
         { status: 400 }
       );
     }
@@ -46,8 +52,11 @@ export async function POST(req) {
       phone,
       firebaseUid,
       aadharUrl,
+      aadharNumber,
       rcUrl,
+      rcNumber,
       licenseUrl,
+      licenseNumber,
     });
 
     return NextResponse.json(
