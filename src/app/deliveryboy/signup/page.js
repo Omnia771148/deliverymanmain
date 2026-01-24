@@ -1,27 +1,31 @@
 "use client";
 import { useState } from "react";
-import { storage, auth } from "../../../../lib/firebase"; 
+import { storage, auth } from "../../../../lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth"; 
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import imageCompression from 'browser-image-compression';
 import Loading from "../../loading/page";
 
 export default function DeliveryBoySignup() {
   const [form, setForm] = useState({
-    name: "", email: "", password: "", phone: ""
+    name: "", email: "", password: "", phone: "",
+    aadharNumber: "", rcNumber: "", licenseNumber: ""
   });
-  
-  // COMMENTED OUT: Document storage state
+
   const [selectedFiles, setSelectedFiles] = useState({
-    /* aadharUrl: null,
+    aadharUrl: null,
     rcUrl: null,
-    licenseUrl: null */
+    licenseUrl: null
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] = useState(null);
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // NEW state for OTP sending button only (prevents full screen loader blocking ReCaptcha)
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
 
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
@@ -35,59 +39,113 @@ export default function DeliveryBoySignup() {
 
   const sendOtp = async (e) => {
     e.preventDefault();
-    if (!form.phone.startsWith("+")) {
+    setErrorMessage(""); // Clear previous errors
+
+    if (!form.phone.trim().startsWith("+")) {
       alert("Please enter phone number with country code (e.g., +919876543210)");
       return;
     }
 
+    setIsSendingOtp(true); // Use local state, NOT global isSubmitting
     try {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+        const container = document.getElementById('recaptcha-container');
+        if (container) container.innerHTML = '';
+      }
+
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible'
+        'size': 'normal', // Changed to 'normal' (visible) for better reliability during debugging
+        'callback': (response) => {
+          // reCAPTCHA solved
+          console.log("Recaptcha solved:", response);
+        },
+        'expired-callback': () => {
+          console.log("Recaptcha expired");
+          if (window.recaptchaVerifier) window.recaptchaVerifier.clear();
+          window.recaptchaVerifier = null;
+        }
       });
-      const result = await signInWithPhoneNumber(auth, form.phone, window.recaptchaVerifier);
+
+      const result = await signInWithPhoneNumber(auth, form.phone.trim(), window.recaptchaVerifier);
       setConfirmationResult(result);
       setIsOtpSent(true);
-      alert("OTP sent to your phone!");
+      alert("OTP sent to your phone! Check your SMS.");
     } catch (error) {
       console.error("OTP Error:", error);
-      alert("Failed to send OTP. Check console.");
+
+      let msg = "Failed to send OTP: " + (error.message || "Unknown error");
+
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+        const container = document.getElementById('recaptcha-container');
+        if (container) container.innerHTML = '';
+      }
+
+      if (error.code === 'auth/captcha-check-failed') {
+        const hostname = window.location.hostname;
+        msg = `HOSTNAME ERROR: Your current hostname "${hostname}" is not allowed. Go to Firebase Console -> Authentication -> Settings -> Authorized Domains and add "${hostname}".`;
+      } else if (error.code === 'auth/invalid-phone-number') {
+        msg = "The phone number is invalid. Format should be +919876543210";
+      } else if (error.code === 'auth/invalid-app-credential') {
+        msg = "Configuration Error: Phone Auth not enabled or API Key restricted. Check Firebase Console.";
+      } else if (error.message && error.message.includes("restricted")) {
+        msg = "This API key is restricted. Please check Google Cloud Console credentials restrictions.";
+      }
+
+      setErrorMessage(msg);
+      alert(msg);
+
+    } finally {
+      setIsSendingOtp(false); // Reset local state
     }
   };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    setErrorMessage("");
 
-    // COMMENTED OUT: Document validation
-    /* if (!selectedFiles.aadharUrl || !selectedFiles.rcUrl || !selectedFiles.licenseUrl) {
-      alert("Please select all 3 photos first!");
+    if (!selectedFiles.aadharUrl || !selectedFiles.rcUrl || !selectedFiles.licenseUrl) {
+      alert("Please select all 3 photos!");
       return;
-    } */
+    }
+
+    if (!form.aadharNumber || !form.rcNumber || !form.licenseNumber) {
+      alert("Please enter numbers for all 3 documents!");
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
       const result = await confirmationResult.confirm(otp);
-      const firebaseUser = result.user; 
+      const firebaseUser = result.user;
 
       const uploadResults = {};
-      
-      // COMMENTED OUT: The upload loop for documents
-      /*
+
       const fileKeys = ["aadharUrl", "rcUrl", "licenseUrl"];
       for (const key of fileKeys) {
         const file = selectedFiles[key];
-        const options = { maxSizeMB: 0.1, maxWidthOrHeight: 800, useWebWorker: true, initialQuality: 0.5 };
-        const compressedFile = await imageCompression(file, options);
+        // Disable web worker to avoid issues in some environments
+        const options = { maxSizeMB: 0.1, maxWidthOrHeight: 800, useWebWorker: false, initialQuality: 0.5 };
+        let compressedFile = file;
+        try {
+          compressedFile = await imageCompression(file, options);
+        } catch (err) {
+          console.error("Compression error for " + key, err);
+          // Fallback to original file if compression fails
+        }
 
-        const storageRef = ref(storage, `delivery_docs/${form.phone}/${key}`);
+        const storageRef = ref(storage, `delivery_docs/${form.phone.trim()}/${key}`);
         await uploadBytes(storageRef, compressedFile);
         const url = await getDownloadURL(storageRef);
         uploadResults[key] = url;
       }
-      */
 
-      // API CALL TO MONGODB (Removed uploadResults from here)
-      const finalFormData = { ...form, firebaseUid: firebaseUser.uid };
+      // API CALL TO MONGODB
+      const finalFormData = { ...form, ...uploadResults, firebaseUid: firebaseUser.uid, phone: form.phone.trim() };
       const res = await fetch("/api/deliveryboy/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,6 +171,12 @@ export default function DeliveryBoySignup() {
     <div style={{ maxWidth: 350, margin: "40px auto", padding: "20px", fontFamily: "sans-serif" }}>
       {isSubmitting && <Loading />}
       <div id="recaptcha-container"></div>
+
+      {errorMessage && (
+        <div style={{ padding: "15px", background: "#ffebee", border: "1px solid #f44336", color: "#d32f2f", borderRadius: "5px", marginBottom: "20px", fontSize: "14px", fontWeight: "bold" }}>
+          {errorMessage}
+        </div>
+      )}
 
       <h2>Delivery Boy Signup</h2>
       <form onSubmit={handleSubmit}>
