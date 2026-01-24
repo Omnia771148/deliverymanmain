@@ -64,9 +64,9 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("MongoDB Signup Error:", error);
+    console.error("MongoDB Signup Error Details:", error);
     return NextResponse.json(
-      { message: "Server error during registration" },
+      { message: "Server error during registration: " + (error.message || "Unknown Error") },
       { status: 500 }
     );
   }
