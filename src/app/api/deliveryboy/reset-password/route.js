@@ -13,24 +13,28 @@ export async function POST(request) {
 
         // Find and update. Handle both +91 and raw phone formats just to be safe, 
         // though the frontend should send consistent format.
-        let user = await DeliveryBoyUser.findOne({ phone });
+        // Find and update using findOneAndUpdate to avoid strict schema validation issues on other fields
+        let user = await DeliveryBoyUser.findOneAndUpdate(
+            { phone: phone },
+            { $set: { password: newPassword } }
+        );
 
         if (!user) {
-            // Try checking if stored without prefix
+            // Try without +91
             const rawPhone = phone.replace('+91', '');
-            user = await DeliveryBoyUser.findOne({ phone: rawPhone });
+            user = await DeliveryBoyUser.findOneAndUpdate(
+                { phone: rawPhone },
+                { $set: { password: newPassword } }
+            );
 
             if (!user) {
                 return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
             }
         }
 
-        user.password = newPassword;
-        await user.save();
-
         return NextResponse.json({ success: true, message: "Password updated successfully" });
     } catch (err) {
-        console.error(err);
-        return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+        console.error("RESET PASSWORD API ERROR:", err);
+        return NextResponse.json({ success: false, message: "Server error: " + err.message }, { status: 500 });
     }
 }
