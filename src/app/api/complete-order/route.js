@@ -77,20 +77,9 @@ export async function POST(request) {
     console.log(`✅ Order saved to FinalCompletedOrder with ID: ${completedOrder._id}`);
 
     // ✅ ADD THIS: update orderstatuses
-    await OrderStatus.updateOne(
-      { orderId: order.orderId }, // IMPORTANT: use actual orderId field
-      {
-        $set: {
-          orderId: order.orderId,
-          status: "completed ra kojja",
-          updatedAt: new Date(),
-          deliveryBoyId: order.deliveryBoyId,
-          deliveryBoyName,
-          deliveryBoyPhone,
-        },
-      },
-      { upsert: true }
-    );
+    // ✅ CHANGED: Delete from orderstatuses instead of updating
+    await OrderStatus.deleteOne({ orderId: order.orderId });
+    console.log(`🗑️ Order deleted from orderstatuses: ${order.orderId}`);
 
     // ✅ DELETE from AcceptedOrder (Clean up the original order now that it's completed)
     if (order.originalOrderId) {
