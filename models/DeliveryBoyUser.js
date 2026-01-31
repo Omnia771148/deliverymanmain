@@ -18,6 +18,7 @@ const deliveryBoySchema = new mongoose.Schema(
     accountNumber: { type: String, required: true },
     ifscCode: { type: String, required: true },
     isActive: { type: Boolean, default: true },
+    fcmToken: { type: String }, // To store Firebase Cloud Messaging token
   },
   {
     collection: "deliveryboyusers",

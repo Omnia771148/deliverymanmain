@@ -188,6 +188,32 @@ export default function MainPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Notification Setup Card */}
+                <div
+                    className="card border-0 shadow-sm mt-3 overflow-hidden"
+                    style={{ borderRadius: "20px", backgroundColor: "#fff" }}
+                >
+                    <div className="card-body p-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 className="mb-1 fw-bold" style={{ color: "#333" }}>Enable Notifications</h6>
+                            <p className="mb-0 text-muted" style={{ fontSize: "12px" }}>Get instant alerts on your mobile</p>
+                        </div>
+                        <button
+                            onClick={() => {
+                                if (deliveryBoyId) {
+                                    window.location.href = `notificationapp://setup?userId=${deliveryBoyId}`;
+                                } else {
+                                    alert("User ID not found. Please login again.");
+                                }
+                            }}
+                            className="btn btn-primary rounded-pill px-4"
+                            style={{ fontSize: "14px", fontWeight: "600" }}
+                        >
+                            Connect
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Stats Section */}
