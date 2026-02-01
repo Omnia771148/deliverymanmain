@@ -42,7 +42,8 @@ export async function POST(req) {
     }
 
     // 1️⃣ Find order from acceptedorders (YOUR EXISTING LOGIC)
-    const order = await AcceptedOrder.findById(orderId);
+    // Use .lean() to get a plain JavaScript object, avoiding schema strictness issues
+    const order = await AcceptedOrder.findById(orderId).lean();
 
     if (!order) {
       return NextResponse.json(
@@ -50,6 +51,43 @@ export async function POST(req) {
         { status: 404 }
       );
     }
+
+    console.log("Processing Accept Order. Restaurant Name found:", order.restaurantName);
+
+    let rName = order.restaurantName;
+
+    // Fallback: If restaurantName is missing, try to fetch from 'restaurants' collection
+    if (!rName && order.restaurantId) {
+      try {
+        console.log("Restaurant name missing in order. Fetching from 'restaurants' collection for ID:", order.restaurantId);
+        const restColl = mongoose.connection.db.collection("restaurants");
+        // Try matching by _id (string) or id or restaurantId
+        let restDoc = await restColl.findOne({ _id: order.restaurantId });
+        if (!restDoc) restDoc = await restColl.findOne({ id: order.restaurantId });
+        if (!restDoc) restDoc = await restColl.findOne({ restaurantId: order.restaurantId });
+
+        // Try numeric conversion if string lookup failed
+        if (!restDoc && !isNaN(order.restaurantId)) {
+          const numId = parseInt(order.restaurantId);
+          restDoc = await restColl.findOne({ _id: numId });
+          if (!restDoc) restDoc = await restColl.findOne({ id: numId });
+        }
+
+        if (restDoc) {
+          // Check common name fields
+          rName = restDoc.name || restDoc.restaurantName || restDoc.title || "Unknown Restaurant";
+          console.log("✅ Fetched Restaurant Name from DB:", rName);
+        } else {
+          console.log("⚠️ Restaurant details not found in DB.");
+          rName = "Unknown Restaurant";
+        }
+      } catch (err) {
+        console.error("❌ Error fetching restaurant details:", err);
+        rName = "Unknown Restaurant";
+      }
+    }
+
+    console.log("Processing Accept Order. Final Restaurant Name:", rName);
 
     // 2️⃣ Insert into acceptedbydeliveries (YOUR EXISTING LOGIC - UNCHANGED)
     await AcceptedByDelivery.create({
@@ -83,6 +121,7 @@ export async function POST(req) {
 
       orderDate: order.orderDate,
       rest: order.rest,
+      restaurantName: rName, // Use the resolved name
       rejectedBy: order.rejectedBy,
 
       status: "Accepted by Delivery", // YOUR EXISTING STATUS - UNCHANGED
@@ -106,26 +145,6 @@ export async function POST(req) {
       deliveryBoyId,
       status: "Accepted by Delivery"
     });
-
-    // 🔔 5️⃣ NOTIFICATION TRIGGER: Alert all OTHER delivery boys that an order was taken? 
-    // OR: Did the user mean "When RESTAURANT accepts order, notify delivery boys"?
-    // The user said: "when accepted orders get order all the delivery boys who are active should get notifications"
-    // "Accepted Orders" usually means "Restaurant Accepted".
-    // "Get order" might mean "Order arrives in the accepted list".
-    // 
-    // IF this route is "Delivery Boy Accepts Order", then we might want to notify the USER that "Delivery Boy is coming".
-
-    // BUT, the prompt says "when accepted orders get order". This implies when the order moves TO 'acceptedorders'.
-    // That happens in a DIFFERENT route (Restaurant Accept).
-
-    // HOWEVER, if the user means: "When a delivery boy accepts an order, notify others (maybe to remove it from their list?)"
-    // 
-    // Let's look at the user request again: "when accepted orders get order all the delivery boys who are active should get notifications"
-    // This sounds like: Restaurant Accepts -> Order moves to 'acceptedorders' -> Notify Delivery Boys "New Order Available".
-
-    // I am currently in 'acceptedorders/accept/route.js'. This route is called when a DELIVERY BOY accepts the order.
-    // So this is NOT the place to notify delivery boys about a new order. 
-    // This is the place to notify the Customer.
 
     return NextResponse.json({
       message: "Order accepted",

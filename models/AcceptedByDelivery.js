@@ -75,12 +75,13 @@ const AcceptedByDeliverySchema = new mongoose.Schema(
     },
 
     rest: String,
+    restaurantName: String,
     rejectedBy: {
       type: [String],
       default: [],
     },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 // This ensures the index is created in the database

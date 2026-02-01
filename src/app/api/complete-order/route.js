@@ -35,7 +35,8 @@ export async function POST(request) {
 
     console.log(`Processing order completion for ID: ${orderId}`);
 
-    const order = await AcceptedByDelivery.findById(orderId);
+    // Use lean() for robustness and raw object access
+    const order = await AcceptedByDelivery.findById(orderId).lean();
 
     if (!order) {
       return Response.json(
@@ -56,7 +57,7 @@ export async function POST(request) {
       }
     }
 
-    const orderData = order.toObject();
+    const orderData = { ...order };
     delete orderData._id;
 
     const completedOrderData = {

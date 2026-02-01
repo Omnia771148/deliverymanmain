@@ -69,6 +69,7 @@ const FinalCompletedOrderSchema = new mongoose.Schema(
     },
 
     rest: String,
+    restaurantName: String,
     rejectedBy: {
       type: [String],
       default: [],
@@ -85,7 +86,7 @@ const FinalCompletedOrderSchema = new mongoose.Schema(
     },
 
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 export default mongoose.models.FinalCompletedOrder ||

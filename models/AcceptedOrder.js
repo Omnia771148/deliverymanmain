@@ -63,6 +63,7 @@ const AcceptedOrderSchema = new mongoose.Schema({
   },
 
   rest: String,
+  restaurantName: String,
 });
 
 export default mongoose.models.AcceptedOrder ||
