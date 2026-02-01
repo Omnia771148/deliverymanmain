@@ -21,12 +21,15 @@ const Navbar = () => {
     ];
 
     return (
-        <div className="navbarContainer">
-            {navItems.map((item, index) => (
-                <Link key={index} href={item.path} className="navItem">
-                    <i className={`bi ${item.icon} navIcon`}></i>
-                </Link>
-            ))}
+        <div className="navbar-container nav-visible">
+            {navItems.map((item, index) => {
+                const isActive = pathname === item.path;
+                return (
+                    <Link key={index} href={item.path} className={`nav-item ${isActive ? 'active' : ''}`}>
+                        <i className={`bi ${item.icon} nav-icon`}></i>
+                    </Link>
+                );
+            })}
         </div>
     );
 };
