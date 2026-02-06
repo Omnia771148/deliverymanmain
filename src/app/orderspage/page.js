@@ -252,9 +252,12 @@ export default function AcceptedOrders() {
             </Link>
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="no-orders-message">
-            <h3>No orders available right now.</h3>
-            <p>Please check back later.</p>
+          <div className="no-orders-wrapper">
+            <div className="empty-state-icon">
+              <i className="bi bi-box2-heart"></i>
+            </div>
+            <h3 className="empty-state-title">No Orders Yet</h3>
+            <p className="empty-state-subtitle">We are looking for new requests nearby. Stay tuned!</p>
           </div>
         ) : (
           <div className="orders-list">

@@ -28,20 +28,35 @@ export async function POST(req) {
 
         // 2. Insert into AcceptedByRestorent (Archive it)
         try {
-            await AcceptedByRestorent.create(orderToDelete.toObject());
+            const archiveData = orderToDelete.toObject();
+            delete archiveData._id; // Remove _id to avoid collision if auto-generated or same ID logic differs
+
+            await AcceptedByRestorent.create(archiveData);
         } catch (archiveError) {
-            console.error("Error archiving order:", archiveError);
-            // We continue to delete? Or stop?
-            // User said "it should also send to new collection".
-            // If archiving fails, safe to abort to prevent data loss.
-            return NextResponse.json(
-                { message: "Failed to archive order", error: archiveError.message },
-                { status: 500 }
-            );
+            // If duplicate key error (already archived), we can safely ignore and proceed to delete
+            if (archiveError.code === 11000) {
+                console.log("Order already exists in archive, proceeding to delete.");
+            } else {
+                console.error("Error archiving order:", archiveError);
+                return NextResponse.json(
+                    { message: "Failed to archive order", error: archiveError.message },
+                    { status: 500 }
+                );
+            }
         }
 
         // 3. Delete from AcceptedOrder
         await AcceptedOrder.findByIdAndDelete(orderId);
+
+        // 4. Update AcceptedByDelivery to mark as picked up
+        // We need to find the document in AcceptedByDelivery that corresponds to this original order
+        // The Delivery Boy's collection uses 'originalOrderId' to link back.
+        const AcceptedByDelivery = (await import("../../../../models/AcceptedByDelivery")).default;
+
+        await AcceptedByDelivery.findOneAndUpdate(
+            { originalOrderId: orderId },
+            { $set: { orderPickedUp: true } }
+        );
 
         return NextResponse.json({
             message: "Order moved to AcceptedByRestorent and removed from acceptedorders",
