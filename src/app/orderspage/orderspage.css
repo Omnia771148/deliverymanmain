@@ -1,0 +1,128 @@
+/* src/app/orderspage/orderspage.css */
+
+.orders-page-container {
+    background-color: #F8F5F0;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    /* Space for bottom nav */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.spv-header {
+    background-color: #E3D5C2;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 15px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.header-icon {
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.spv-title {
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-right: auto;
+    color: #333;
+}
+
+.header-text {
+    text-align: right;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.order-card {
+    background-color: #E3D5C2;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    color: #222;
+}
+
+.order-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.row-label {
+    font-weight: 500;
+    width: 35%;
+}
+
+.row-separator {
+    width: 10%;
+    text-align: center;
+}
+
+.row-value {
+    width: 55%;
+    font-weight: 500;
+}
+
+.location-badge {
+    background-color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: normal;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-reject {
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: #D32F2F;
+    /* Thick Red */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-accept {
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: #388E3C;
+    /* Thick Green */
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-reject:hover,
+.btn-accept:hover {
+    opacity: 0.9;
+}
+
+.no-orders-message {
+    text-align: center;
+    padding: 50px;
+    color: #888;
+}

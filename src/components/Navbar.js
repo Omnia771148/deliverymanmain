@@ -7,6 +7,12 @@ import "./Navbar.css";
 const Navbar = () => {
     const pathname = usePathname();
 
+    const hiddenRoutes = ['/deliveryboy/login', '/deliveryboy/signup', '/deliveryboy/forgot-password'];
+
+    if (hiddenRoutes.includes(pathname)) {
+        return null;
+    }
+
     // Navigation Items according to the requirement and image order:
     // 1. Home (House)
     // 2. Map (Folded Map / Location)
