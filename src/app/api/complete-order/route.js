@@ -49,7 +49,7 @@ export async function POST(request) {
 
     if (!order) {
       return Response.json(
-        { success: false, message: "Order not found in accepted deliveries" },
+        { success: false, message: "Order not found at accepted deliveries" },
         { status: 404 }
       );
     }
