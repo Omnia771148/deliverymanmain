@@ -14,6 +14,15 @@ const OrderStatus =
     "orderstatuses"
   );
 
+// ✅ ADD THIS (PendingPaymentOfDeliveryBoy model)
+const PendingPaymentOfDeliveryBoy =
+  mongoose.models.PendingPaymentOfDeliveryBoy ||
+  mongoose.model(
+    "PendingPaymentOfDeliveryBoy",
+    new mongoose.Schema({}, { strict: false }),
+    "pendingpaymentsofdeliveryboy"
+  );
+
 const connectDB = async () => {
   if (mongoose.connections[0].readyState) return;
   await mongoose.connect(process.env.MONGODB_URI);
@@ -46,14 +55,19 @@ export async function POST(request) {
     }
 
     // ✅ FETCH DELIVERY BOY DETAILS (Use existing if available, else fetch)
+    // We need account details from the user collection regardless
     let deliveryBoyName = order.deliveryBoyName || "";
     let deliveryBoyPhone = order.deliveryBoyPhone || "";
+    let accountNumber = "";
+    let ifscCode = "";
 
-    if ((!deliveryBoyName || !deliveryBoyPhone) && order.deliveryBoyId) {
+    if (order.deliveryBoyId) {
       const deliveryBoy = await DeliveryBoyUser.findById(order.deliveryBoyId);
       if (deliveryBoy) {
         deliveryBoyName = deliveryBoyName || deliveryBoy.name;
         deliveryBoyPhone = deliveryBoyPhone || deliveryBoy.phone;
+        accountNumber = deliveryBoy.accountNumber || "";
+        ifscCode = deliveryBoy.ifscCode || "";
       }
     }
 
@@ -76,6 +90,52 @@ export async function POST(request) {
     await completedOrder.save();
 
     console.log(`✅ Order saved to FinalCompletedOrder with ID: ${completedOrder._id}`);
+
+    // ✅ SAVE TO PendingPaymentOfDeliveryBoy
+    // ✅ SAVE TO PendingPaymentOfDeliveryBoy
+    try {
+      // Check if there is already a PENDING payment record for this delivery boy
+      // We use findOneAndUpdate with upsert to handle concurrency and atomic updates better
+
+      const chargeToAdd = parseFloat(order.deliveryCharge) || 0;
+
+      const updatedPayment = await PendingPaymentOfDeliveryBoy.findOneAndUpdate(
+        {
+          deliveryBoyId: order.deliveryBoyId,
+          status: "Pending"
+        },
+        {
+          // Atomically increment the charge
+          $inc: { deliveryCharge: chargeToAdd },
+
+          // Update these fields if they changed (or set them if new)
+          $set: {
+            deliveryBoyName: deliveryBoyName,
+            deliveryBoyPhone: deliveryBoyPhone,
+            accountNumber: accountNumber,
+            ifscCode: ifscCode,
+            lastCompletedOrderId: completedOrder._id,
+            updatedAt: new Date()
+          },
+
+          // Set these ONLY if creating a new document
+          $setOnInsert: {
+            createdAt: new Date()
+          }
+        },
+        {
+          upsert: true, // Create if not exists
+          new: true,    // Return the updated document
+          setDefaultsOnInsert: true
+        }
+      );
+
+      console.log(`✅ Pending payment processed. New Total: ${updatedPayment.deliveryCharge}`);
+
+    } catch (paymentError) {
+      console.error("⚠️ Error saving pending payment record:", paymentError);
+      // We don't block the main success response if this fails, but logging it is important
+    }
 
     // ✅ ADD THIS: update orderstatuses
     // ✅ CHANGED: Delete from orderstatuses instead of updating
