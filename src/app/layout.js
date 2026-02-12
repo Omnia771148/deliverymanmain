@@ -39,6 +39,12 @@ export default function RootLayout({ children }) {
         />
         {/* Bootstrap Icons */}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+        {/* Leaflet CSS for OSM */}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossOrigin="" />
+        {/* Leaflet Routing Machine CSS */}
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

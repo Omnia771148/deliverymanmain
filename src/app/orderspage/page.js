@@ -7,6 +7,9 @@ import "./modal.css";
 // import BottomNav from "../components/BottomNav";
 import Link from "next/link"; // Added for redirecting to mainpage if needed
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const OSMMap = dynamic(() => import("../components/OSMMap"), { ssr: false });
 
 export default function AcceptedOrders() {
   const [orders, setOrders] = useState([]);
@@ -117,6 +120,13 @@ export default function AcceptedOrders() {
     onConfirm: null, // Function on button click
   });
 
+  const [mapModal, setMapModal] = useState({
+    show: false,
+    lat: null,
+    lng: null,
+    title: ""
+  });
+
   const closeModal = () => {
     setModal({ ...modal, show: false });
   };
@@ -182,6 +192,32 @@ export default function AcceptedOrders() {
     } catch (err) {
       console.error(err);
       showModal("error", "Error", "Something went wrong");
+    }
+  };
+
+  const openMap = (order) => {
+    let lat = null;
+    let lng = null;
+    let title = order.restaurantName || "Restaurant";
+
+    const url = order.rest;
+    if (url) {
+      const match = url.match(/query=([-.\d]+),([-.\d]+)/) || url.match(/q=([-.\d]+),([-.\d]+)/);
+      if (match) {
+        lat = parseFloat(match[1]);
+        lng = parseFloat(match[2]);
+      }
+    }
+
+    if (lat && lng) {
+      setMapModal({
+        show: true,
+        lat,
+        lng,
+        title
+      });
+    } else {
+      alert("Coordinates not found for this location.");
     }
   };
 
@@ -282,14 +318,20 @@ export default function AcceptedOrders() {
                     <div className="row-value">
                       <span className="location-badge">
                         {order.rest ? (
-                          <a
-                            href={order.rest}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textDecoration: 'none', color: 'inherit' }}
+                          <button
+                            type="button"
+                            onClick={() => openMap(order)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'inherit',
+                              textDecoration: 'underline',
+                              padding: 0,
+                              cursor: 'pointer'
+                            }}
                           >
                             View Map
-                          </a>
+                          </button>
                         ) : (
                           "Restaurant location"
                         )}
@@ -335,6 +377,37 @@ export default function AcceptedOrders() {
           </div>
         )}
       </div>
+
+      {/* Map Modal */}
+      {mapModal.show && (
+        <div className="modal-overlay">
+          <div className="modal-card" style={{ maxWidth: "95%", width: "500px", padding: "15px" }}>
+            <div className="d-flex justify-content-between align-items-center w-100 mb-3 px-2">
+              <h5 className="m-0 fw-bold">{mapModal.title} Location</h5>
+              <button
+                onClick={() => setMapModal({ ...mapModal, show: false })}
+                className="btn-close"
+                style={{ fontSize: "14px", border: "none", background: "none", cursor: "pointer" }}
+              >✕</button>
+            </div>
+
+            <OSMMap
+              lat={mapModal.lat}
+              lng={mapModal.lng}
+              title={mapModal.title}
+            />
+
+            <div className="mt-3 w-100 text-center">
+              <button
+                className="modal-button w-100"
+                onClick={() => setMapModal({ ...mapModal, show: false })}
+              >
+                Close Map
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CUSTOM MODAL */}
       {modal.show && (

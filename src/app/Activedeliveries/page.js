@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Loading from "../loading/page";
+import dynamic from "next/dynamic";
 // import BottomNav from "../components/BottomNav";
 import "./activedeliveries.css";
+
+// Dynamically import OSMMap to avoid SSR issues with Leaflet
+const OSMMap = dynamic(() => import("../components/OSMMap"), { ssr: false });
 
 export default function ActiveDeliveriesPage() {
   const [deliveries, setDeliveries] = useState([]);
@@ -21,6 +25,14 @@ export default function ActiveDeliveriesPage() {
     message: "",
     title: "",
     type: "success" // 'success' or 'error'
+  });
+
+  // Map Modal State
+  const [mapModal, setMapModal] = useState({
+    show: false,
+    lat: null,
+    lng: null,
+    title: ""
   });
 
   useEffect(() => {
@@ -144,6 +156,41 @@ export default function ActiveDeliveriesPage() {
     }
   };
 
+  const openMap = (delivery, isRestaurant = false) => {
+    let lat = null;
+    let lng = null;
+    let title = "";
+
+    if (isRestaurant) {
+      title = delivery.restaurantName || "Restaurant";
+      const url = delivery.rest;
+      if (url) {
+        const match = url.match(/query=([-.\d]+),([-.\d]+)/) || url.match(/q=([-.\d]+),([-.\d]+)/);
+        if (match) {
+          lat = parseFloat(match[1]);
+          lng = parseFloat(match[2]);
+        }
+      }
+    } else {
+      title = delivery.userName || "Customer";
+      if (delivery.location && delivery.location.lat && delivery.location.lng) {
+        lat = delivery.location.lat;
+        lng = delivery.location.lng;
+      }
+    }
+
+    if (lat && lng) {
+      setMapModal({
+        show: true,
+        lat,
+        lng,
+        title
+      });
+    } else {
+      alert("Coordinates not found for this location.");
+    }
+  };
+
   const handleCompleteOrder = async (delivery) => {
     try {
       // API call to complete order (Final step)
@@ -246,15 +293,14 @@ export default function ActiveDeliveriesPage() {
                               {delivery.restaurantName || "Restaurant Name Not Available"}
                             </div>
 
-                            <a
-                              href={delivery.rest}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => openMap(delivery, true)}
                               className="ad-location-badge"
-                              style={{ marginTop: '5px', display: 'inline-flex', alignItems: 'center' }}
+                              style={{ marginTop: '5px', display: 'inline-flex', alignItems: 'center', border: 'none', cursor: 'pointer' }}
                             >
                               <span style={{ marginRight: '5px' }}>📍</span> VIEW IN MAP
-                            </a>
+                            </button>
                           </div>
                         </div>
 
@@ -348,15 +394,14 @@ export default function ActiveDeliveriesPage() {
 
                         {delivery.location && (delivery.location.lat || delivery.location.lng) && (
                           <div style={{ marginTop: '15px', textAlign: 'center' }}>
-                            <a
-                              href={`https://www.google.com/maps/search/?api=1&query=${delivery.location.lat},${delivery.location.lng}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              type="button"
+                              onClick={() => openMap(delivery, false)}
                               className="ad-location-badge"
-                              style={{ backgroundColor: '#e8f5e9', color: '#2e7d32', display: 'inline-flex', alignItems: 'center' }}
+                              style={{ backgroundColor: '#e1f5fe', color: '#0288d1', display: 'inline-flex', alignItems: 'center', border: 'none', cursor: 'pointer' }}
                             >
                               <span style={{ marginRight: '5px' }}>📍</span> Open Customer Map
-                            </a>
+                            </button>
                           </div>
                         )}
                       </div>
@@ -462,6 +507,37 @@ export default function ActiveDeliveriesPage() {
                 onClick={() => setModal({ ...modal, show: false })}
               >
                 {modal.type === "success" ? "Continue" : "Retry"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Map Modal */}
+      {mapModal.show && (
+        <div className="ad-modal-overlay">
+          <div className="ad-modal-card" style={{ maxWidth: "95%", width: "500px", padding: "15px" }}>
+            <div className="d-flex justify-content-between align-items-center w-100 mb-3 px-2">
+              <h5 className="m-0 fw-bold">{mapModal.title} Location</h5>
+              <button
+                onClick={() => setMapModal({ ...mapModal, show: false })}
+                className="btn-close"
+                style={{ fontSize: "14px", border: "none", background: "none", cursor: "pointer" }}
+              >✕</button>
+            </div>
+
+            <OSMMap
+              lat={mapModal.lat}
+              lng={mapModal.lng}
+              title={mapModal.title}
+            />
+
+            <div className="mt-3 w-100 text-center">
+              <button
+                className="ad-modal-btn w-100"
+                onClick={() => setMapModal({ ...mapModal, show: false })}
+              >
+                Close Map
               </button>
             </div>
           </div>
