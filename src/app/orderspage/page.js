@@ -117,7 +117,7 @@ export default function AcceptedOrders() {
     type: "success", // 'success' or 'error'
     title: "",
     message: "",
-    onConfirm: null, // Function on button click
+    onConfirm: null, //
   });
 
   const [mapModal, setMapModal] = useState({
