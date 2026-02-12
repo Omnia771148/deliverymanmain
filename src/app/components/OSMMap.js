@@ -221,39 +221,47 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                     style={{
                         backgroundColor: isRoutingActive ? '#e74c3c' : '#2ecc71',
                         color: 'white',
-                        padding: '12px 25px',
+                        padding: '12px 20px',
                         borderRadius: '30px',
                         border: 'none',
                         fontWeight: 'bold',
-                        fontSize: '16px',
+                        fontSize: '14px',
                         cursor: 'pointer',
                         boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
                         transition: 'all 0.3s ease',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px'
+                        justifyContent: 'center',
+                        gap: '8px',
+                        flex: 1,
+                        whiteSpace: 'nowrap'
                     }}
                 >
-                    <span>{isRoutingActive ? '✕ STOP DIRECTIONS' : '🛵 SEE LIVE DIRECTIONS'}</span>
+                    <span>{isRoutingActive ? '✕ STOP DIRECTIONS' : '🛵 LIVE DIRECTIONS'}</span>
                 </button>
 
-                {!currentPos && (
-                    <button
-                        onClick={startLiveTracking}
-                        style={{
-                            backgroundColor: '#34495e',
-                            color: 'white',
-                            padding: '12px 25px',
-                            borderRadius: '30px',
-                            border: 'none',
-                            fontWeight: 'bold',
-                            fontSize: '14px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        REFRESH GPS
-                    </button>
-                )}
+                <button
+                    onClick={startLiveTracking}
+                    style={{
+                        backgroundColor: '#34495e',
+                        color: 'white',
+                        padding: '12px 20px',
+                        borderRadius: '30px',
+                        border: 'none',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                        transition: 'all 0.3s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flex: 1,
+                        whiteSpace: 'nowrap'
+                    }}
+                >
+                    REFRESH GPS
+                </button>
             </div>
         </div>
     );
