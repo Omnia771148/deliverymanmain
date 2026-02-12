@@ -142,7 +142,7 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
     if (!lat || !lng) return <div className="p-4 text-center">Invalid destination coordinates.</div>;
 
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: '#F8F5F0' }}>
             {/* Error Message Display */}
             {locationError && (
                 <div style={{
@@ -167,23 +167,22 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                 overflow: 'hidden',
                 border: 'none',
                 position: 'relative',
-                minHeight: '300px'
+                minHeight: '300px',
+                backgroundColor: '#F8F5F0'
             }}>
                 <MapContainer
                     center={destination}
                     zoom={15}
                     zoomControl={false}
-                    style={{ height: '100%', width: '100%' }}
+                    style={{ height: '100%', width: '100%', backgroundColor: '#F8F5F0' }}
                 >
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-                    {/* Destination Marker */}
                     <Marker position={destination} icon={destinationIcon}>
                         <Popup>
-                            <strong>Destination:</strong><br />
                             {title || "Delivery Location"}
                         </Popup>
                     </Marker>
@@ -209,7 +208,8 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 gap: '12px',
-                marginTop: '15px'
+                marginTop: '15px',
+                padding: '0 5px'
             }}>
                 <button
                     onClick={() => {
@@ -219,7 +219,7 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                         }
                     }}
                     style={{
-                        backgroundColor: isRoutingActive ? '#e74c3c' : '#2ecc71',
+                        backgroundColor: '#2ecc71',
                         color: 'white',
                         padding: '12px 20px',
                         borderRadius: '30px',
@@ -243,7 +243,7 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                 <button
                     onClick={startLiveTracking}
                     style={{
-                        backgroundColor: '#34495e',
+                        backgroundColor: '#000000',
                         color: 'white',
                         padding: '12px 20px',
                         borderRadius: '30px',

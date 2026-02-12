@@ -527,8 +527,8 @@ export default function ActiveDeliveriesPage() {
       {mapModal.show && (
         <div className="ad-modal-overlay">
           <div className="ad-modal-card ad-map-modal-card">
-            <div className="d-flex justify-content-between align-items-center w-100 mb-2 px-1">
-              <h5 className="m-0 fw-bold">{mapModal.title}</h5>
+            <div className="d-flex justify-content-end align-items-center w-100 mb-2 px-1">
+
               <button
                 onClick={() => setMapModal({ ...mapModal, show: false })}
                 className="btn-close"
