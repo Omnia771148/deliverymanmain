@@ -172,7 +172,7 @@ export default function ActiveDeliveriesPage() {
     let title = "";
 
     if (isRestaurant) {
-      title = delivery.restaurantName || "Restaurant";
+      title = delivery.restaurantName || "Delivery Location";
       const url = delivery.rest;
       if (url) {
         const match = url.match(/query=([-.\d]+),([-.\d]+)/) || url.match(/q=([-.\d]+),([-.\d]+)/);
@@ -182,7 +182,7 @@ export default function ActiveDeliveriesPage() {
         }
       }
     } else {
-      title = delivery.userName || "Customer";
+      title = delivery.userName || "Delivery Location";
       if (delivery.location && delivery.location.lat && delivery.location.lng) {
         lat = delivery.location.lat;
         lng = delivery.location.lng;

@@ -184,7 +184,7 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                     <Marker position={destination} icon={destinationIcon}>
                         <Popup>
                             <strong>Destination:</strong><br />
-                            {title || "Target Location"}
+                            {title || "Delivery Location"}
                         </Popup>
                     </Marker>
 
@@ -255,16 +255,6 @@ const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
                     </button>
                 )}
             </div>
-
-            <p style={{
-                textAlign: 'center',
-                fontSize: '11px',
-                color: '#666',
-                marginTop: '10px',
-                fontStyle: 'italic'
-            }}>
-                Live location automatically updates as you move.
-            </p>
         </div>
     );
 };

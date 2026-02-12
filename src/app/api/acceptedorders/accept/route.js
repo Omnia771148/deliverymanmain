@@ -75,15 +75,15 @@ export async function POST(req) {
 
         if (restDoc) {
           // Check common name fields
-          rName = restDoc.name || restDoc.restaurantName || restDoc.title || "Unknown Restaurant";
+          rName = restDoc.name || restDoc.restaurantName || restDoc.title || "Delivery Location";
           console.log("✅ Fetched Restaurant Name from DB:", rName);
         } else {
           console.log("⚠️ Restaurant details not found in DB.");
-          rName = "Unknown Restaurant";
+          rName = "Delivery Location";
         }
       } catch (err) {
         console.error("❌ Error fetching restaurant details:", err);
-        rName = "Unknown Restaurant";
+        rName = "Delivery Location";
       }
     }
 

@@ -208,7 +208,7 @@ export default function AcceptedOrders() {
   const openMap = (order) => {
     let lat = null;
     let lng = null;
-    let title = order.restaurantName || "Restaurant";
+    let title = order.restaurantName || "Delivery Location";
 
     const url = order.rest;
     if (url) {
