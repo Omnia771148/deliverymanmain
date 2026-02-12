@@ -131,6 +131,16 @@ export default function AcceptedOrders() {
     setModal({ ...modal, show: false });
   };
 
+  // Handle hiding navbar when map is open
+  useEffect(() => {
+    if (mapModal.show) {
+      document.body.classList.add('map-open');
+    } else {
+      document.body.classList.remove('map-open');
+    }
+    return () => document.body.classList.remove('map-open');
+  }, [mapModal.show]);
+
   const showModal = (type, title, message, onConfirm = null) => {
     setModal({
       show: true,

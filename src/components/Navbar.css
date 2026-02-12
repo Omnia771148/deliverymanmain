@@ -29,6 +29,11 @@
     /* Move down off-screen */
 }
 
+/* Hide when map is open */
+body.map-open .navbar-container {
+    display: none !important;
+}
+
 /* Individual Nav Items */
 .nav-item {
     position: relative;

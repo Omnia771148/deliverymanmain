@@ -49,6 +49,16 @@ export default function ActiveDeliveriesPage() {
     }
   }, []);
 
+  // Handle hiding navbar when map is open
+  useEffect(() => {
+    if (mapModal.show) {
+      document.body.classList.add('map-open');
+    } else {
+      document.body.classList.remove('map-open');
+    }
+    return () => document.body.classList.remove('map-open');
+  }, [mapModal.show]);
+
   // FIRST FETCH APPROACH
   const fetchDeliveriesApproach1 = async (userId) => {
     try {
