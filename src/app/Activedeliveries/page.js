@@ -516,26 +516,29 @@ export default function ActiveDeliveriesPage() {
       {/* Map Modal */}
       {mapModal.show && (
         <div className="ad-modal-overlay">
-          <div className="ad-modal-card" style={{ maxWidth: "95%", width: "500px", padding: "15px" }}>
-            <div className="d-flex justify-content-between align-items-center w-100 mb-3 px-2">
-              <h5 className="m-0 fw-bold">{mapModal.title} Location</h5>
+          <div className="ad-modal-card ad-map-modal-card">
+            <div className="d-flex justify-content-between align-items-center w-100 mb-2 px-1">
+              <h5 className="m-0 fw-bold">{mapModal.title}</h5>
               <button
                 onClick={() => setMapModal({ ...mapModal, show: false })}
                 className="btn-close"
-                style={{ fontSize: "14px", border: "none", background: "none", cursor: "pointer" }}
+                style={{ fontSize: "1.2rem", border: "none", background: "none", cursor: "pointer", color: "#333" }}
               >✕</button>
             </div>
 
-            <OSMMap
-              lat={mapModal.lat}
-              lng={mapModal.lng}
-              title={mapModal.title}
-            />
+            <div style={{ flexGrow: 1, width: '100%', minHeight: '300px' }}>
+              <OSMMap
+                lat={mapModal.lat}
+                lng={mapModal.lng}
+                title={mapModal.title}
+              />
+            </div>
 
             <div className="mt-3 w-100 text-center">
               <button
                 className="ad-modal-btn w-100"
                 onClick={() => setMapModal({ ...mapModal, show: false })}
+                style={{ backgroundColor: '#e74c3c' }}
               >
                 Close Map
               </button>
@@ -617,6 +620,27 @@ export default function ActiveDeliveriesPage() {
         }
         .ad-modal-btn:active {
            transform: scale(0.95);
+        }
+        .ad-map-modal-card {
+            width: 95%;
+            max-width: 500px;
+            height: 80vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (max-width: 600px) {
+            .ad-map-modal-card {
+                width: 100% !important;
+                height: 100% !important;
+                max-width: 100% !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 10px !important;
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
         }
         @keyframes adPopIn {
           from { opacity: 0; transform: scale(0.9); }

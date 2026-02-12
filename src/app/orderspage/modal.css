@@ -118,3 +118,30 @@
         opacity: 1;
     }
 }
+
+.map-modal-card {
+    width: 95% !important;
+    max-width: 500px !important;
+    height: 85vh !important;
+    padding: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 600px) {
+    .map-modal-card {
+        width: 100% !important;
+        height: 100vh !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1001;
+    }
+}

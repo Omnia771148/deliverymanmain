@@ -79,7 +79,7 @@ const RoutingControl = ({ start, end }) => {
 };
 
 // Main Map Component
-const OSMMap = ({ lat, lng, title }) => {
+const OSMMap = ({ lat, lng, title, onFullScreenClose }) => {
     const [currentPos, setCurrentPos] = useState(null);
     const [isRoutingActive, setIsRoutingActive] = useState(false);
     const [locationError, setLocationError] = useState(null);
@@ -142,7 +142,7 @@ const OSMMap = ({ lat, lng, title }) => {
     if (!lat || !lng) return <div className="p-4 text-center">Invalid destination coordinates.</div>;
 
     return (
-        <div style={{ position: 'relative', width: '100%' }}>
+        <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
             {/* Error Message Display */}
             {locationError && (
                 <div style={{
@@ -153,19 +153,21 @@ const OSMMap = ({ lat, lng, title }) => {
                     fontSize: '12px',
                     marginBottom: '10px',
                     textAlign: 'center',
-                    border: '1px solid #ef9a9a'
+                    border: '1px solid #ef9a9a',
+                    zIndex: 2000
                 }}>
                     ⚠️ {locationError}
                 </div>
             )}
 
             <div style={{
-                height: '400px',
+                flexGrow: 1,
                 width: '100%',
-                borderRadius: '20px',
+                borderRadius: 'inherit',
                 overflow: 'hidden',
-                border: '3px solid #E3D5C2',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+                border: 'none',
+                position: 'relative',
+                minHeight: '300px'
             }}>
                 <MapContainer
                     center={destination}
