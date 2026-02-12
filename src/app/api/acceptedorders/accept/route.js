@@ -122,6 +122,7 @@ export async function POST(req) {
       orderDate: order.orderDate,
       rest: order.rest,
       restaurantName: rName, // Use the resolved name
+      restaurantLocation: order.restaurantLocation,
       rejectedBy: order.rejectedBy,
 
       status: "Accepted by Delivery", // YOUR EXISTING STATUS - UNCHANGED

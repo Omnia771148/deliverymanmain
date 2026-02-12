@@ -172,10 +172,16 @@ export default function ActiveDeliveriesPage() {
     let title = "";
 
     if (isRestaurant) {
-      title = delivery.restaurantName || "Delivery Location";
-      const url = delivery.rest;
-      if (url) {
-        const match = url.match(/query=([-.\d]+),([-.\d]+)/) || url.match(/q=([-.\d]+),([-.\d]+)/);
+      title = delivery.restaurantName || "Restaurant Location";
+
+      // 1. Try reading from restaurantLocation object
+      if (delivery.restaurantLocation && delivery.restaurantLocation.lat && delivery.restaurantLocation.lng) {
+        lat = parseFloat(delivery.restaurantLocation.lat);
+        lng = parseFloat(delivery.restaurantLocation.lng);
+      }
+      // 2. Fallback to existing logic (parsing 'rest' URL)
+      else if (delivery.rest) {
+        const match = delivery.rest.match(/query=([-.\d]+),([-.\d]+)/) || delivery.rest.match(/q=([-.\d]+),([-.\d]+)/);
         if (match) {
           lat = parseFloat(match[1]);
           lng = parseFloat(match[2]);

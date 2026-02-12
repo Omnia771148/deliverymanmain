@@ -65,6 +65,10 @@ const AcceptedOrderSchema = new mongoose.Schema({
 
   rest: String,
   restaurantName: String,
+  restaurantLocation: {
+    lat: Number,
+    lng: Number,
+  },
 });
 
 export default mongoose.models.AcceptedOrder ||

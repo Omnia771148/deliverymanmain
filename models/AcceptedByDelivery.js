@@ -76,6 +76,10 @@ const AcceptedByDeliverySchema = new mongoose.Schema(
 
     rest: String,
     restaurantName: String,
+    restaurantLocation: {
+      lat: Number,
+      lng: Number,
+    },
     rejectedBy: {
       type: [String],
       default: [],

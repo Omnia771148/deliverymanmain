@@ -208,11 +208,16 @@ export default function AcceptedOrders() {
   const openMap = (order) => {
     let lat = null;
     let lng = null;
-    let title = order.restaurantName || "Delivery Location";
+    let title = order.restaurantName || "Restaurant Location";
 
-    const url = order.rest;
-    if (url) {
-      const match = url.match(/query=([-.\d]+),([-.\d]+)/) || url.match(/q=([-.\d]+),([-.\d]+)/);
+    // Priority 1: Read from restaurantLocation object
+    if (order.restaurantLocation && order.restaurantLocation.lat && order.restaurantLocation.lng) {
+      lat = parseFloat(order.restaurantLocation.lat);
+      lng = parseFloat(order.restaurantLocation.lng);
+    }
+    // Priority 2: Fallback to existing logic (parsing 'rest' URL)
+    else if (order.rest) {
+      const match = order.rest.match(/query=([-.\d]+),([-.\d]+)/) || order.rest.match(/q=([-.\d]+),([-.\d]+)/);
       if (match) {
         lat = parseFloat(match[1]);
         lng = parseFloat(match[2]);
@@ -231,7 +236,6 @@ export default function AcceptedOrders() {
     }
   };
 
-  // ❌ FIRST CODE'S REJECT ORDER
   const rejectOrderFirst = async (orderId) => {
     const deliveryBoyId = localStorage.getItem("userId");
 
@@ -327,7 +331,7 @@ export default function AcceptedOrders() {
                     <div className="row-separator">-</div>
                     <div className="row-value">
                       <span className="location-badge">
-                        {order.rest ? (
+                        {order.rest || (order.restaurantLocation && order.restaurantLocation.lat) ? (
                           <button
                             type="button"
                             onClick={() => openMap(order)}
