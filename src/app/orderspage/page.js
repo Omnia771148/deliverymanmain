@@ -175,6 +175,7 @@ export default function AcceptedOrders() {
     }
 
     try {
+      setLoading(true);
       const res = await fetch("/api/acceptedorders/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -182,6 +183,7 @@ export default function AcceptedOrders() {
       });
       const serverData = await res.json();
       if (!res.ok) {
+        setLoading(false);
         // If the server sends 409 (Conflict), serverData.message will be "Too late!..."
         showModal("error", "Failed", serverData.message, () => {
           // Remove from list immediately so the boy doesn't try again
@@ -191,6 +193,7 @@ export default function AcceptedOrders() {
         return;
       }
 
+      setLoading(false);
       // Update both orders states
       setOrders((prev) => prev.filter((o) => o._id !== orderId));
       setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
@@ -200,6 +203,7 @@ export default function AcceptedOrders() {
       });
 
     } catch (err) {
+      setLoading(false);
       console.error(err);
       showModal("error", "Error", "Something went wrong");
     }
@@ -244,15 +248,23 @@ export default function AcceptedOrders() {
       return;
     }
 
-    await fetch("/api/acceptedorders/reject", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId, deliveryBoyId }),
-    });
+    setLoading(true);
+    try {
+      await fetch("/api/acceptedorders/reject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, deliveryBoyId }),
+      });
 
-    // Update both orders states
-    setOrders((prev) => prev.filter((o) => o._id !== orderId));
-    setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
+      // Update both orders states
+      setOrders((prev) => prev.filter((o) => o._id !== orderId));
+      setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Error", "Something went wrong while rejecting.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Format currency
