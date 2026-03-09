@@ -13,8 +13,8 @@
 
 @media (max-width: 768px) {
     .signup-page-container {
-        background: #ded0b6;
-        /* Fallback or full color for mobile if preferred, but gradient works too */
+        background: linear-gradient(90deg, #fdfbf7 50%, #ded0b6 50%);
+        /* Changed to 50/50 split for mobile */
         padding: 20px 10px;
     }
 }

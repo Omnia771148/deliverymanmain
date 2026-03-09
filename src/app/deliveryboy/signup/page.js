@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { storage, auth } from "../../../../lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
