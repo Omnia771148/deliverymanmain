@@ -91,7 +91,7 @@ export default function MyProfileMenu() {
                             </div>
                         </Link>
 
-                        {/* Contact Us Link */}
+                      
                         <Link href="/contactus" className="text-decoration-none">
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
