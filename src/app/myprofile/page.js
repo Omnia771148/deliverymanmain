@@ -57,9 +57,11 @@ export default function MyProfileMenu() {
                 </div>
 
                 {/* Setting Title Pill */}
-                <div className={`d-inline-flex align-items-center px-4 py-2 mb-4 bg-white shadow-sm ${styles.settingPill}`}>
-                    <i className={`bi bi-gear-fill me-2 ${styles.settingIcon}`}></i>
-                    <span className={styles.settingText}>Setting</span>
+                <div className="d-flex justify-content-center">
+                    <div className={`d-inline-flex align-items-center px-4 py-2 mb-4 bg-white shadow-sm ${styles.settingPill}`}>
+                        <i className={`bi bi-gear-fill me-2 ${styles.settingIcon}`}></i>
+                        <span className={styles.settingText}>Setting</span>
+                    </div>
                 </div>
 
                 {/* Main Menu Card */}
@@ -70,8 +72,8 @@ export default function MyProfileMenu() {
                         <Link href="/mydetails" className="text-decoration-none">
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
-                                    <i className={`bi bi-pencil-square text-black ${styles.menuIcon}`}></i>
-                                    <span className={styles.menuText}>my profile</span>
+                                    <i className={`bi bi-person-fill text-black ${styles.menuIcon}`}></i>
+                                    <span className={styles.menuText}>My Profile</span>
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>

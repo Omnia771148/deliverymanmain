@@ -24,9 +24,9 @@ const Navbar = () => {
 
     const navItems = [
         { name: 'Home', path: '/mainpage', icon: 'bi-house-fill' },
-        { name: 'Bag', path: '/orderspage', icon: 'bi-bag-fill' },
+        { name: 'Bag', path: '/orderspage', icon: 'bi-bell-fill' },
         { name: 'Map', path: '/Activedeliveries', icon: 'bi-map-fill' },
-        { name: 'Profile', path: '/myprofile', icon: 'bi-person-fill' },
+        { name: 'Profile', path: '/myprofile', icon: 'bi-gear-fill' },
     ];
 
     return (

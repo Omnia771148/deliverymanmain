@@ -95,41 +95,89 @@ export default function MyOrdersPage() {
     }
 
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "800px", margin: "0 auto", paddingBottom: "80px" }}>
-            <h1 style={{ fontSize: "24px", marginBottom: "20px", borderBottom: "1px solid #eee", paddingBottom: "10px", color: "#333" }}>
-                My Orders
-            </h1>
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "#FBF8F2", // Light cream page background
+            padding: "20px",
+            paddingBottom: "100px",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        }}>
+            {/* Header Area */}
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                marginBottom: "30px",
+                marginTop: "10px"
+            }}>
+                {/* Back Button */}
+                <button
+                    onClick={() => window.history.back()}
+                    style={{
+                        position: "absolute",
+                        left: "0",
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                        backgroundColor: "#fff",
+                        border: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                        cursor: "pointer"
+                    }}
+                >
+                    <i className="bi bi-chevron-left" style={{ fontSize: "20px", fontWeight: "bold" }}></i>
+                </button>
 
-            {/* Filter Buttons */}
+                {/* Title Pill */}
+                <div style={{
+                    backgroundColor: "#fff",
+                    padding: "12px 30px",
+                    borderRadius: "50px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                }}>
+                    <i className="bi bi-bag-check-fill" style={{ fontSize: "24px" }}></i>
+                    <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "700" }}>My Orders</h2>
+                </div>
+            </div>
+
+            {/* Filter Pills */}
             <div style={{
                 display: "flex",
                 gap: "10px",
                 overflowX: "auto",
-                paddingBottom: "15px",
-                marginBottom: "15px",
-                whiteSpace: "nowrap",
-                scrollbarWidth: "none"
+                padding: "5px 0 20px 0",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                WebkitOverflowScrolling: "touch"
             }}>
                 {[
-                    { id: "all", label: "All Time" },
-                    { id: "1day", label: "Past 24h" },
-                    { id: "3days", label: "Past 3 Days" },
-                    { id: "1week", label: "Past Week" },
-                    { id: "1month", label: "Past Month" }
+                    { id: "all", label: "All" },
+                    { id: "1day", label: "24h" },
+                    { id: "3days", label: "3 Days" },
+                    { id: "1week", label: "1 Week" },
+                    { id: "1month", label: "1 Month" }
                 ].map(opt => (
                     <button
                         key={opt.id}
                         onClick={() => setFilterPeriod(opt.id)}
                         style={{
-                            padding: "8px 16px",
-                            borderRadius: "20px",
+                            padding: "10px 20px",
+                            borderRadius: "50px",
                             border: "none",
-                            backgroundColor: filterPeriod === opt.id ? "#007bff" : "#e9ecef",
-                            color: filterPeriod === opt.id ? "#fff" : "#495057",
-                            cursor: "pointer",
+                            backgroundColor: filterPeriod === opt.id ? "#1C1C1C" : "#fff",
+                            color: filterPeriod === opt.id ? "#fff" : "#1C1C1C",
+                            boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
                             fontSize: "14px",
-                            fontWeight: "500",
-                            transition: "all 0.2s"
+                            fontWeight: "600",
+                            whiteSpace: "nowrap",
+                            cursor: "pointer"
                         }}
                     >
                         {opt.label}
@@ -137,105 +185,117 @@ export default function MyOrdersPage() {
                 ))}
             </div>
 
-            {/* Total Earnings Highlight Card */}
+            {/* Earnings Summary Card */}
             <div style={{
-                background: "linear-gradient(135deg, #28a745 0%, #218838 100%)",
-                borderRadius: "12px",
-                padding: "20px",
-                color: "white",
+                backgroundColor: "#fff",
+                borderRadius: "30px",
+                padding: "20px 25px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: "25px",
-                boxShadow: "0 4px 6px rgba(40, 167, 69, 0.2)"
+                boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
             }}>
-                <p style={{ margin: "0 0 5px 0", fontSize: "14px", opacity: 0.9 }}>Total Earnings ({filterPeriod === 'all' ? 'All Time' : filterPeriod})</p>
-                <h2 style={{ margin: 0, fontSize: "32px", fontWeight: "bold" }}>₹{totalEarnings}</h2>
-                <p style={{ margin: "5px 0 0 0", fontSize: "13px", opacity: 0.8 }}>
-                    from {filteredOrders.length} completed {filteredOrders.length === 1 ? 'order' : 'orders'}
-                </p>
+                <div>
+                    <span style={{ fontSize: "14px", color: "#888", fontWeight: "600", textTransform: "uppercase" }}>Total Earnings</span>
+                    <h2 style={{ margin: 0, fontSize: "28px", fontWeight: "800", color: "#28a745" }}>₹{totalEarnings}</h2>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <span style={{ fontSize: "14px", color: "#888", fontWeight: "600", textTransform: "uppercase" }}>Deliveries</span>
+                    <h2 style={{ margin: 0, fontSize: "28px", fontWeight: "800", color: "#333" }}>{filteredOrders.length}</h2>
+                </div>
             </div>
 
-
-            {filteredOrders.length === 0 ? (
-                <div style={{
-                    textAlign: "center",
-                    padding: "40px",
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "8px",
-                    color: "#6c757d",
-                    border: "1px dashed #dee2e6"
-                }}>
-                    No completed orders found for this period.
-                </div>
-            ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                    {filteredOrders.map((order) => (
+            {/* Orders List Container */}
+            <div style={{
+                backgroundColor: "#E6DCC8", // Tan container background
+                borderRadius: "40px",
+                padding: "20px",
+                maxWidth: "600px",
+                margin: "0 auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px"
+            }}>
+                {filteredOrders.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "40px", color: "#7A6F5D", fontWeight: "600" }}>
+                        No orders found for this period.
+                    </div>
+                ) : (
+                    filteredOrders.map((order) => (
                         <div
                             key={order._id}
                             style={{
-                                border: "1px solid #e1e4e8",
-                                borderRadius: "12px",
                                 backgroundColor: "#fff",
-                                boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
-                                overflow: "hidden",
-                                opacity: 0.9
+                                borderRadius: "30px",
+                                padding: "20px",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "10px",
+                                boxShadow: "0 2px 6px rgba(0,0,0,0.02)"
                             }}
                         >
-                            <div style={{ padding: "20px" }}>
-                                {/* Top Row: Rest Name & Completed Date */}
-                                <div style={{ marginBottom: "15px" }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <div>
-                                            <h2 style={{ margin: "0 0 5px 0", fontSize: "18px", color: "#2c3e50" }}>
-                                                {order.rest || "Restaurant Name Not Available"}
-                                            </h2>
-                                            <p style={{ margin: 0, fontSize: "13px", color: "#28a745", fontWeight: "600" }}>
-                                                ✓ Delivered successfully
-                                            </p>
-                                        </div>
-                                        <div style={{ textAlign: "right" }}>
-                                            <p style={{ margin: 0, fontSize: "12px", color: "#6c757d" }}>
-                                                {order.completedAt ? new Date(order.completedAt).toLocaleDateString() : (order.updatedAt ? new Date(order.updatedAt).toLocaleDateString() : "Date N/A")}
-                                            </p>
-                                            <p style={{ margin: 0, fontSize: "12px", color: "#6c757d" }}>
-                                                {order.completedAt ? new Date(order.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                <div style={{ minWidth: 0 }}>
 
-                                {/* Order Stats Grid */}
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
-                                    <div>
-                                        <p style={{ margin: "0 0 5px 0", fontSize: "12px", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>Earnings</p>
-                                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px", color: "#28a745" }}>
-                                            ₹{order.deliveryCharge || 0}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p style={{ margin: "0 0 5px 0", fontSize: "12px", color: "#6c757d", textTransform: "uppercase", letterSpacing: "0.5px" }}>Total Items</p>
-                                        <p style={{ margin: 0, fontWeight: "bold", fontSize: "16px", color: "#333" }}>
-                                            {order.totalCount || order.items?.length || 0}
-                                        </p>
-                                    </div>
+                                    <span style={{
+                                        fontSize: "15px",
+                                        color: "#fff",
+                                        fontWeight: "800",
+                                        backgroundColor: "#28a745",
+                                        padding: "6px 15px",
+                                        borderRadius: "50px",
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        letterSpacing: "0.5px"
+                                    }}>
+                                        <i className="bi bi-check-circle-fill"></i>
+                                        DELIVERED
+                                    </span>
                                 </div>
-
-                                {/* Collapsible/Expandable Details */}
-                                <div style={{ borderTop: "1px solid #eee", paddingTop: "15px", marginTop: "10px" }}>
-                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "13px", color: "#555" }}>
-                                        <div>
-                                            <span>Order ID:</span>
-                                            <br />
-                                            <span style={{ fontFamily: "monospace", color: "#333" }}>{order.orderId || "N/A"}</span>
-                                        </div>
-                                        <div style={{ textAlign: "right" }}>
-                                        </div>
-                                    </div>
+                                <div style={{
+                                    backgroundColor: "#f8f9fa",
+                                    padding: "5px 12px",
+                                    borderRadius: "15px",
+                                    textAlign: "right"
+                                }}>
+                                    <span style={{ display: "block", fontSize: "11px", color: "#888", fontWeight: "700" }}>EARNINGS</span>
+                                    <span style={{ fontSize: "16px", fontWeight: "800", color: "#1C1C1C" }}>₹{order.deliveryCharge || 0}</span>
                                 </div>
+                            </div>
 
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                borderTop: "1px dashed #eee",
+                                paddingTop: "10px",
+                                marginTop: "5px"
+                            }}>
+                                <span style={{ fontSize: "13px", color: "#666", fontWeight: "500" }}>
+                                    <i className="bi bi-calendar3" style={{ marginRight: "5px" }}></i>
+                                    {order.completedAt ? new Date(order.completedAt).toLocaleDateString() : "Date N/A"}
+                                </span>
+                                <span style={{ fontSize: "13px", color: "#666", fontWeight: "500" }}>
+                                    <i className="bi bi-clock" style={{ marginRight: "5px" }}></i>
+                                    {order.completedAt ? new Date(order.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                                </span>
+                            </div>
+
+                            <div style={{
+                                fontSize: "11px",
+                                color: "#999",
+                                fontWeight: "600",
+                                textAlign: "center",
+                                marginTop: "5px"
+                            }}>
+                                ID: {order.orderId || "N/A"}
                             </div>
                         </div>
-                    ))}
-                </div>
-            )}
+                    ))
+                )}
+            </div>
             {/* <BottomNav /> */}
         </div>
     );

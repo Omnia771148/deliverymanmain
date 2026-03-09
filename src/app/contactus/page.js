@@ -1,119 +1,104 @@
 "use client";
-import Link from 'next/link';
-// import BottomNav from "../components/BottomNav";
+import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function ContactUs() {
+    const router = useRouter();
+
     return (
-        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "600px", margin: "0 auto", paddingBottom: "80px" }}>
-            <h1 style={{ fontSize: "24px", marginBottom: "30px", textAlign: "center", color: "#333" }}>Contact Support</h1>
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "#FBF8F2", // Light cream page background
+            padding: "20px",
+            paddingBottom: "100px",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        }}>
+            {/* Header Area */}
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                marginBottom: "40px",
+                marginTop: "10px"
+            }}>
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    style={{
+                        position: "absolute",
+                        left: "0",
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                        backgroundColor: "#fff",
+                        border: "none",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                        cursor: "pointer"
+                    }}
+                >
+                    <i className="bi bi-chevron-left" style={{ fontSize: "20px", fontWeight: "bold" }}></i>
+                </button>
 
-            <div style={{ backgroundColor: "#f8f9fa", padding: "25px", borderRadius: "12px", marginBottom: "20px" }}>
-                <h3 style={{ marginTop: 0, color: "#0056b3" }}>Need Help?</h3>
-                <p style={{ color: "#555", lineHeight: "1.6" }}>
-                    If you are facing any issues with the delivery app or need assistance with your orders, please reach out to our support team.
-                </p>
+                {/* Title Pill */}
+                <div style={{
+                    backgroundColor: "#fff",
+                    padding: "12px 30px",
+                    borderRadius: "50px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                }}>
+                    <i className="bi bi-envelope-fill" style={{ fontSize: "24px" }}></i>
+                    <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "700" }}>Contact Us</h2>
+                </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-
-                {/* Call Support */}
-                <a href="tel:+919876543210" style={{ textDecoration: "none" }}>
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "20px",
-                        backgroundColor: "#fff",
-                        border: "1px solid #e1e4e8",
-                        borderRadius: "10px",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-                    }}>
-                        <div style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            backgroundColor: "#e8f5e9",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "15px",
-                            color: "#2e7d32",
-                            fontSize: "20px"
-                        }}>
-                            📞
-                        </div>
-                        <div>
-                            <h4 style={{ margin: "0 0 5px 0", color: "#333" }}>Call Support</h4>
-                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>+91 98765 43210</p>
-                        </div>
-                    </div>
-                </a>
-
-                {/* Email Support */}
-                <a href="mailto:support@deliveryapp.com" style={{ textDecoration: "none" }}>
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "20px",
-                        backgroundColor: "#fff",
-                        border: "1px solid #e1e4e8",
-                        borderRadius: "10px",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-                    }}>
-                        <div style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            backgroundColor: "#e3f2fd",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "15px",
-                            color: "#1565c0",
-                            fontSize: "20px"
-                        }}>
-                            ✉️
-                        </div>
-                        <div>
-                            <h4 style={{ margin: "0 0 5px 0", color: "#333" }}>Email Support</h4>
-                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>support@deliveryapp.com</p>
-                        </div>
-                    </div>
-                </a>
-
-                {/* Whatsapp Support */}
-                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "20px",
-                        backgroundColor: "#fff",
-                        border: "1px solid #e1e4e8",
-                        borderRadius: "10px",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
-                    }}>
-                        <div style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            backgroundColor: "#e0f2f1",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "15px",
-                            color: "#00695c",
-                            fontSize: "20px"
-                        }}>
-                            💬
-                        </div>
-                        <div>
-                            <h4 style={{ margin: "0 0 5px 0", color: "#333" }}>WhatsApp Chat</h4>
-                            <p style={{ margin: 0, color: "#666", fontSize: "14px" }}>Chat with us</p>
-                        </div>
-                    </div>
-                </a>
-
+            {/* Main Content Card */}
+            <div style={{
+                backgroundColor: "#E6DCC8", // Tan container background
+                borderRadius: "40px",
+                padding: "25px",
+                maxWidth: "450px",
+                margin: "0 auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px"
+            }}>
+                {/* Contact Rows */}
+                <ContactItem icon="bi-telephone-fill" text="+91 100" link="tel:+91100" />
+                <ContactItem icon="bi-envelope-fill" text="spv@gmail.com" link="mailto:spv@gmail.com" />
+                <ContactItem icon="bi-instagram" text="Instagram" link="https://instagram.com" />
+                <ContactItem icon="bi-facebook" text="Facebook" link="https://facebook.com" />
+                <ContactItem icon="bi-twitter-x" text="Twitter" link="https://twitter.com" />
             </div>
+
             {/* <BottomNav /> */}
         </div>
+    );
+}
+
+function ContactItem({ icon, text, link }) {
+    return (
+        <a href={link} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <div style={{
+                backgroundColor: "#fff",
+                borderRadius: "50px",
+                padding: "18px 25px",
+                display: "flex",
+                alignItems: "center",
+                gap: "20px",
+                transition: "transform 0.2s"
+            }}>
+                <div style={{ width: "24px", textAlign: "center" }}>
+                    <i className={`bi ${icon}`} style={{ fontSize: "22px", color: "#111" }}></i>
+                </div>
+                <span style={{ fontSize: "18px", fontWeight: "600", color: "#111" }}>{text}</span>
+            </div>
+        </a>
     );
 }

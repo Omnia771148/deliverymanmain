@@ -168,7 +168,7 @@ export default function MainPage() {
                                 fontWeight: "500"
                             }}
                         >
-                            {isActive ? "Now you are active" : "Tap here to go to Active"}
+                            {"Active"}
                         </div>
                         <div
                             onClick={isActive ? toggleActiveStatus : undefined}
@@ -184,7 +184,7 @@ export default function MainPage() {
                                 fontWeight: "500"
                             }}
                         >
-                            {!isActive ? "Now you are inactive" : "Tap here to inactive"}
+                            {"Inactive"}
                         </div>
                     </div>
                 </div>
@@ -264,6 +264,14 @@ export default function MainPage() {
                     </div>
                 </div>
             </div>
+            <br>
+            </br>
+            <br></br>
+            <br>
+            </br>
+            <br></br>
+            <br>
+            </br>
 
             {/* Bottom Navigation */}
             {/* Bottom Navigation */}

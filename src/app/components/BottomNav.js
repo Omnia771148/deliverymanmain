@@ -20,7 +20,7 @@ export default function BottomNav() {
                     </div>
                     <div className="col">
                         <Link href="/orderspage" className={`text-decoration-none ${isActive('/orderspage') ? 'text-primary' : 'text-dark'}`}>
-                            <i className={`bi ${isActive('/orderspage') ? 'bi-bag-fill' : 'bi-bag'} fs-3`}></i>
+                            <i className={`bi ${isActive('/orderspage') ? 'bi-bell-fill' : 'bi-bell'} fs-3`}></i>
                         </Link>
                     </div>
                     <div className="col">

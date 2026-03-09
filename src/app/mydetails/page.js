@@ -43,125 +43,156 @@ export default function MyDetails() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-50" style={{ paddingBottom: "100px", fontFamily: "Segoe UI, sans-serif" }}>
-            {/* Profile Header */}
-            <div style={{ backgroundColor: "#2d3436", color: "white", padding: "30px 20px", borderBottomLeftRadius: "0px", borderBottomRightRadius: "0px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                    <div style={{
-                        width: "80px",
-                        height: "80px",
+        <div style={{
+            minHeight: "100vh",
+            backgroundColor: "#FBF8F2",
+            padding: "20px",
+            paddingBottom: "100px",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+        }}>
+            {/* Header Area */}
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                marginBottom: "30px",
+                marginTop: "10px"
+            }}>
+                <button
+                    onClick={() => router.back()}
+                    style={{
+                        position: "absolute",
+                        left: "0",
+                        width: "50px",
+                        height: "50px",
                         borderRadius: "50%",
                         backgroundColor: "#fff",
+                        border: "none",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "30px",
-                        color: "#2d3436"
-                    }}>
-                        👤
-                    </div>
-                    <div>
-                        <h2 style={{ margin: 0, fontSize: "24px" }}>{user.name}</h2>
-                        <p style={{ margin: "5px 0 0 0", opacity: 0.8 }}>+91 {user.phone}</p>
-                        <span style={{
-                            display: "inline-block",
-                            marginTop: "8px",
-                            padding: "2px 8px",
-                            borderRadius: "10px",
-                            backgroundColor: user.isActive ? "#00b894" : "#ff7675",
-                            fontSize: "12px",
-                            fontWeight: "bold"
-                        }}>
-                            {user.isActive ? "Active" : "Inactive"}
-                        </span>
-                    </div>
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                        cursor: "pointer"
+                    }}
+                >
+                    <i className="bi bi-chevron-left" style={{ fontSize: "20px", fontWeight: "bold" }}></i>
+                </button>
+
+                <div style={{
+                    backgroundColor: "#fff",
+                    padding: "12px 30px",
+                    borderRadius: "50px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+                }}>
+                    <i className="bi bi-person-fill" style={{ fontSize: "24px" }}></i>
+                    <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "700" }}>My Profile</h2>
                 </div>
             </div>
 
-            <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+            {/* Main Content Card */}
+            <div style={{
+                backgroundColor: "#E6DCC8",
+                borderRadius: "40px",
+                padding: "25px",
+                maxWidth: "450px",
+                margin: "0 auto",
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px"
+            }}>
+                {/* PERSONAL SECTION */}
+                <SectionLabel text="Personal Details" />
+                <DetailItem icon="bi-person" text={user.name} label="Full Name" />
+                <DetailItem icon="bi-telephone" text={user.phone} label="Phone" />
+                <DetailItem icon="bi-envelope" text={user.email} label="Email" />
+                <DetailItem icon="bi-hash" text={user._id} label="Partner ID" isSmall />
 
-                {/* Info Card: Personal */}
-                <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "12px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", marginBottom: "20px" }}>
-                    <h3 style={{ margin: "0 0 15px 0", fontSize: "16px", color: "#555", borderBottom: "1px solid #eee", paddingBottom: "10px", display: "flex", alignItems: "center" }}>
-                        <span style={{ marginRight: "8px" }}>📋</span> Personal Details
-                    </h3>
-                    <div style={{ display: "grid", gap: "15px" }}>
-                        <DetailRow label="Full Name" value={user.name} />
-                        <DetailRow label="Email" value={user.email} />
-                        <DetailRow label="Phone" value={`+91 ${user.phone}`} />
-                        <DetailRow label="Partner ID" value={user._id} mono />
-                    </div>
-                </div>
+                {/* BANK SECTION */}
+                <SectionLabel text="Bank Details" />
+                <DetailItem icon="bi-bank" text={user.accountNumber} label="A/C Number" />
+                <DetailItem icon="bi-building" text={user.ifscCode} label="IFSC Code" />
 
-                {/* Info Card: Bank */}
-                <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "12px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", marginBottom: "20px" }}>
-                    <h3 style={{ margin: "0 0 15px 0", fontSize: "16px", color: "#555", borderBottom: "1px solid #eee", paddingBottom: "10px", display: "flex", alignItems: "center" }}>
-                        <span style={{ marginRight: "8px" }}>🏦</span> Bank Details
-                    </h3>
-                    <div style={{ display: "grid", gap: "15px" }}>
-                        <DetailRow label="Account Number" value={user.accountNumber} mono />
-                        <DetailRow label="IFSC Code" value={user.ifscCode} mono />
-                    </div>
-                </div>
+                {/* DOCUMENTS SECTION */}
+                <SectionLabel text="Documents" />
+                <DetailItem icon="bi-file-earmark-person" text={user.aadharNumber} label="Aadhar" url={user.aadharUrl} />
+                <DetailItem icon="bi-car-front" text={user.rcNumber} label="RC Book" url={user.rcUrl} />
+                <DetailItem icon="bi-card-list" text={user.licenseNumber} label="License" url={user.licenseUrl} />
 
-                {/* Info Card: Documents */}
-                <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "12px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", marginBottom: "20px" }}>
-                    <h3 style={{ margin: "0 0 15px 0", fontSize: "16px", color: "#555", borderBottom: "1px solid #eee", paddingBottom: "10px", display: "flex", alignItems: "center" }}>
-                        <span style={{ marginRight: "8px" }}>🪪</span> Documents
-                    </h3>
-                    <div style={{ display: "grid", gap: "20px" }}>
-                        <DocumentRow label="Aadhar Card" number={user.aadharNumber} url={user.aadharUrl} />
-                        <DocumentRow label="RC Book" number={user.rcNumber} url={user.rcUrl} />
-                        <DocumentRow label="Driving License" number={user.licenseNumber} url={user.licenseUrl} />
-                    </div>
-                </div>
-
-                <p style={{ textAlign: "center", marginTop: "20px", color: "#b2bec3", fontSize: "12px" }}>
-                    Joined: {new Date(user.createdAt).toLocaleDateString()}
-                </p>
+                <DetailItem
+                    icon="bi-calendar4"
+                    label="Joined"
+                    text={(() => {
+                        const date = new Date(user.createdAt);
+                        return isNaN(date.getTime()) ? "N/A" : date.toISOString().split('T')[0];
+                    })()}
+                />
 
             </div>
+
             {/* <BottomNav /> */}
         </div>
     );
 }
 
-function DetailRow({ label, value, mono }) {
+function SectionLabel({ text }) {
     return (
-        <div>
-            <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>{label}</label>
-            <div style={{
-                fontSize: "15px",
-                color: "#333",
-                fontWeight: "500",
-                fontFamily: mono ? "monospace" : "inherit",
-                wordBreak: "break-all"
-            }}>
-                {value || "N/A"}
-            </div>
+        <div style={{
+            fontSize: "12px",
+            fontWeight: "700",
+            textTransform: "uppercase",
+            color: "#7A6F5D",
+            marginLeft: "20px",
+            marginTop: "10px",
+            marginBottom: "5px"
+        }}>
+            {text}
         </div>
     );
 }
 
-function DocumentRow({ label, number, url }) {
+function DetailItem({ icon, text, label, url, isSmall }) {
     return (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: "10px", borderBottom: "1px dashed #eee" }}>
-            <div>
-                <label style={{ fontSize: "12px", color: "#888", display: "block", marginBottom: "4px" }}>{label}</label>
-                <div style={{ fontSize: "15px", color: "#333", fontWeight: "600", marginBottom: "5px" }}>{number || "N/A"}</div>
+        <div style={{
+            backgroundColor: "#fff",
+            borderRadius: "50px",
+            padding: "12px 20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.02)"
+        }}>
+            <div style={{ width: "24px", textAlign: "center", flexShrink: 0 }}>
+                <i className={`bi ${icon}`} style={{ fontSize: "20px" }}></i>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: "10px", color: "#888", fontWeight: "600", textTransform: "uppercase" }}>{label}</span>
+                <span style={{
+                    fontSize: isSmall ? "13px" : "15px",
+                    fontWeight: "600",
+                    color: "#333",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap"
+                }}>
+                    {text}
+                </span>
             </div>
             {url && (
-                <a href={url} target="_blank" rel="noopener noreferrer"
-                    style={{
-                        fontSize: "13px",
-                        color: "#0984e3",
-                        textDecoration: "none",
-                        border: "1px solid #0984e3",
-                        padding: "6px 12px",
-                        borderRadius: "20px",
-                        marginTop: "10px"
-                    }}>
-                    View Image
+                <a href={url} target="_blank" rel="noopener noreferrer" style={{
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #ddd",
+                    borderRadius: "20px",
+                    padding: "4px 12px",
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    color: "#333",
+                    textDecoration: "none"
+                }}>
+                    VIEW
                 </a>
             )}
         </div>

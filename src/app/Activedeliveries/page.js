@@ -128,15 +128,26 @@ export default function ActiveDeliveriesPage() {
     const razorpayOrderId = delivery.razorpayOrderId;
 
     if (!razorpayOrderId) {
-      alert("No Razorpay Order ID found for this order");
+      setModal({
+        show: true,
+        title: "",
+        message: "No Razorpay Order ID found for this order",
+        type: "error"
+      });
       return;
     }
 
     if (userInput.length < 5) {
-      alert("Please enter the last 5 characters of the Order ID");
+      setModal({
+        show: true,
+        title: "",
+        message: "Please enter OTP",
+        type: "error"
+      });
       return;
     }
 
+    setLoading(true);
     setVerifying(true);
 
     try {
@@ -163,6 +174,7 @@ export default function ActiveDeliveriesPage() {
       });
     } finally {
       setVerifying(false); // Enable the button again
+      setLoading(false);
     }
   };
 
@@ -351,6 +363,7 @@ export default function ActiveDeliveriesPage() {
                       <button
                         className="ad-btn-pickup"
                         onClick={async () => {
+                          setLoading(true);
                           try {
                             const res = await fetch("/api/delete-accepted-order", {
                               method: "POST",
@@ -370,6 +383,8 @@ export default function ActiveDeliveriesPage() {
                             }
                           } catch (err) {
                             console.error("Error:", err);
+                          } finally {
+                            setLoading(false);
                           }
                         }}
                       >
@@ -494,7 +509,7 @@ export default function ActiveDeliveriesPage() {
                           onClick={() => verifyRazorpayId(delivery)}
                           disabled={verifying}
                         >
-                          {verifying ? "..." : "COMPLETE"}
+                          COMPLETE
                         </button>
                       </div>
                     </div>
@@ -522,7 +537,7 @@ export default function ActiveDeliveriesPage() {
                 className="ad-modal-btn"
                 onClick={() => setModal({ ...modal, show: false })}
               >
-                {modal.type === "success" ? "Continue" : "Retry"}
+                {modal.type === "success" ? "Continue" : "Try Again"}
               </button>
             </div>
           </div>
@@ -570,56 +585,62 @@ export default function ActiveDeliveriesPage() {
           backdrop-filter: blur(2px);
         }
         .ad-modal-card {
-           background: white;
+           background: #F8F6F1; /* Cream background from image */
            width: 85%;
            max-width: 320px;
-           border-radius: 20px;
-           padding: 30px 20px;
+           border-radius: 25px;
+           padding: 35px 25px;
            display: flex;
            flex-direction: column;
            align-items: center;
-           box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+           box-shadow: 0 10px 30px rgba(0,0,0,0.08);
            animation: adPopIn 0.3s ease-out;
         }
         .ad-modal-icon-circle {
-           width: 70px;
-           height: 70px;
+           width: 80px;
+           height: 80px;
            border-radius: 50%;
            display: flex;
            align-items: center;
            justify-content: center;
-           font-size: 30px;
+           font-size: 35px;
            color: white;
-           font-weight: bold;
-           margin-bottom: 20px;
+           font-weight: 300;
+           margin-bottom: 25px;
+           box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .ad-modal-icon-circle.success {
            background-color: #4CAF50;
         }
         .ad-modal-icon-circle.error {
-           background-color: #f44336;
+           background-color: #FA4D41; /* Red color from image */
         }
         .ad-modal-content {
            text-align: center;
+           width: 100%;
         }
         .ad-modal-title {
            font-size: 1.4rem;
            font-weight: 700;
-           color: #333;
+           color: #111;
            margin-bottom: 10px;
         }
         .ad-modal-message {
-           font-size: 1rem;
-           color: #666;
-           line-height: 1.4;
-           margin-bottom: 25px;
+           font-size: 1.2rem;
+           color: #111;
+           font-weight: 500;
+           line-height: 1.3;
+           margin-bottom: 30px;
+           padding: 0 10px;
         }
         .ad-modal-btn {
            background: black;
            color: white;
            border: none;
-           padding: 12px 40px;
-           border-radius: 30px;
+           width: 100%;
+           max-width: 220px;
+           padding: 15px;
+           border-radius: 40px;
            font-size: 1.1rem;
            font-weight: 600;
            cursor: pointer;
