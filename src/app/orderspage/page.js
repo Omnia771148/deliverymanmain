@@ -174,6 +174,7 @@ export default function AcceptedOrders() {
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch("/api/acceptedorders/accept", {
         method: "POST",
@@ -202,6 +203,8 @@ export default function AcceptedOrders() {
     } catch (err) {
       console.error(err);
       showModal("error", "Error", "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -289,15 +292,17 @@ export default function AcceptedOrders() {
 
         {/* Inactive State */}
         {!isActive ? (
-          <div className="text-center py-12 mx-4 bg-white rounded-lg shadow">
-            <div className="text-gray-400 text-6xl mb-4">⏸️</div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">
+          <div className="inactive-state-card">
+            <div className="inactive-icon-circle">
+              <i className="bi bi-pause-fill"></i>
+            </div>
+            <h3 className="inactive-title">
               You are currently Inactive
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="inactive-text">
               Please go to the Home page and set yourself as Active to see and accept delivery orders.
             </p>
-            <Link href="/mainpage" className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 text-decoration-none">
+            <Link href="/mainpage" className="btn-go-home">
               Go to Home
             </Link>
           </div>
