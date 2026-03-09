@@ -7,7 +7,7 @@
     align-items: flex-start;
     padding: 40px 20px;
     position: relative;
-    background: linear-gradient(90deg, #fdfbf7 40%, #ded0b6 40%);
+    background: linear-gradient(90deg, #fdfbf7 50%, #ded0b6 50%);
     font-family: 'Poppins', sans-serif;
 }
 
