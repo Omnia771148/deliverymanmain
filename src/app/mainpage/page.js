@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Loading from "../loading/page";
 // import BottomNav from "../components/BottomNav";
 
 export default function MainPage() {
@@ -109,13 +110,7 @@ export default function MainPage() {
     };
 
     if (loading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
+        return <Loading />;
     }
 
     return (
