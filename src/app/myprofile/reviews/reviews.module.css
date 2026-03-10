@@ -1,0 +1,121 @@
+.pageContainer {
+    background-color: #f7f7eb;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 100px;
+}
+
+.headerSection {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 80px;
+}
+
+.backButton {
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: #333;
+    position: absolute;
+    left: 20px;
+}
+
+.titlePill {
+    background-color: white;
+    padding: 10px 30px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.titlePill i {
+    font-size: 1.2rem;
+    color: #ffc107;
+}
+
+.titlePill span {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.reviewsContainer {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reviewCard {
+    background-color: #DCCFB7;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.reviewInner {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.orderIdSection {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.ratingSection {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.starIcon {
+    color: #ffc107;
+}
+
+.ratingValue {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.reviewText {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+    font-style: italic;
+    background: #fcfbf4;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 3px solid #E2DCC8;
+}
+
+.noReviews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px;
+    color: #999;
+}
+
+.noReviews i {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}

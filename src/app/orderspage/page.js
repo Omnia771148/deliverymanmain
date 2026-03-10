@@ -18,6 +18,7 @@ export default function AcceptedOrders() {
 
   // LOGIC FROM FIRST: State to track if driver is already busy
   const [hasActiveDelivery, setHasActiveDelivery] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   // RE-ADDED: track active status
   const [isActive, setIsActive] = useState(() => {
@@ -98,18 +99,23 @@ export default function AcceptedOrders() {
 
   useEffect(() => {
     // Initial fetch
-    fetchOrders();
-
-    // Set up polling every 3 seconds
-    const intervalId = setInterval(() => {
+    if (!actionLoading) {
       fetchOrders();
-    }, 3000);
+    }
 
-    // Cleanup function to clear interval when component unmounts
+    // Set up polling every 3 seconds, but only if not currently processing an action
+    let intervalId;
+    if (!actionLoading) {
+      intervalId = setInterval(() => {
+        fetchOrders();
+      }, 3000);
+    }
+
+    // Cleanup function to clear interval when component unmounts or status changes
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [fetchOrders]);
+  }, [fetchOrders, actionLoading]);
 
   // Modal State
   const [modal, setModal] = useState({
@@ -174,7 +180,7 @@ export default function AcceptedOrders() {
       return;
     }
 
-    setLoading(true);
+    setActionLoading(true);
     try {
       const res = await fetch("/api/acceptedorders/accept", {
         method: "POST",
@@ -196,15 +202,14 @@ export default function AcceptedOrders() {
       setOrders((prev) => prev.filter((o) => o._id !== orderId));
       setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
 
-      showModal("success", "Success!", "Order accepted successfully", () => {
-        router.push("/Activedeliveries");
-      });
+      // Redirect immediately to Active Deliveries
+      router.push("/Activedeliveries");
 
     } catch (err) {
       console.error(err);
       showModal("error", "Error", "Something went wrong");
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
@@ -268,7 +273,7 @@ export default function AcceptedOrders() {
     }).format(amount);
   };
 
-  if (loading) return <Loading />;
+  if (loading || actionLoading) return <Loading />;
 
   return (
     <AuthWrapper>

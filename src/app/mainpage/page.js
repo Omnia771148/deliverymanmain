@@ -263,7 +263,7 @@ export default function MainPage() {
                         <h6 className="text-center text-decoration-underline fw-bold mb-4" style={{ color: "#111" }}>Monthly record</h6>
                         <div className="row text-center align-items-center">
                             <div className="col-6 border-end border-secondary">
-                                <p className="mb-1 fw-bold" style={{ fontSize: "14px" }}>Total no of orders</p>
+                                <p className="mb-1 fw-bold" style={{ fontSize: "14px" }}>Total orders</p>
                                 <h2 className="fw-bold mb-0">{stats.totalOrders}</h2>
                             </div>
                             <div className="col-6">
@@ -280,7 +280,7 @@ export default function MainPage() {
             <br>
             </br>
             <br></br>
-            <br>
+            <br>    
             </br>
 
             {/* Bottom Navigation */}
