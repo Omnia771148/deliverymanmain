@@ -2,6 +2,13 @@
 
 import React from 'react';
 
+import { Outfit } from "next/font/google";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
+
 export default function Loading() {
   return (
     <div style={styles.overlay}>
@@ -9,7 +16,7 @@ export default function Loading() {
         {/* Logo Section */}
         <div style={styles.logoSection}>
           <div style={styles.orangeDot}></div>
-          <h1 style={styles.spvText}>SPV</h1>
+          <h1 className={outfit.className} style={styles.leevonText}>LEEVON</h1>
         </div>
         
         {/* Progress Bar */}
@@ -69,26 +76,27 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '10px',
-    marginBottom: '25px',
+    gap: '12px',
+    marginBottom: '20px',
   },
   orangeDot: {
-    width: '12px',
-    height: '12px',
+    width: '10px',
+    height: '10px',
     backgroundColor: '#FF6B00',
     borderRadius: '50%',
+    marginTop: '4px',
   },
-  spvText: {
-    fontSize: '32px',
-    fontWeight: '600',
-    color: '#333',
+  leevonText: {
+    fontSize: '28px',
+    fontWeight: '700',
+    color: '#111',
     margin: 0,
-    letterSpacing: '4px',
-    fontFamily: 'system-ui, -apple-system, sans-serif'
+    letterSpacing: '5px',
+    textTransform: 'uppercase',
   },
   progressContainer: {
-    width: '80%',
-    margin: '0 auto 20px auto',
+    width: '75%',
+    margin: '0 auto 15px auto',
   },
   progressBase: {
     height: '4px',
@@ -107,22 +115,22 @@ const styles = {
     left: '0',
   },
   textSection: {
-    marginTop: '15px',
+    marginTop: '10px',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center', // Added for perfect centering
+    alignItems: 'center',
     justifyContent: 'center',
     gap: '2px'
   },
   mainText: {
-    fontSize: '18px',
+    fontSize: '16px',
     fontWeight: '700',
     color: '#1A1A1A',
     margin: 0,
     letterSpacing: '-0.2px'
   },
   subText: {
-    fontSize: '12px',
+    fontSize: '11px',
     color: '#9E9B96',
     fontWeight: '500',
     margin: 0,
