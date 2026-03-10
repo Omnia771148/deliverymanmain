@@ -274,12 +274,48 @@ export default function AcceptedOrders() {
     <AuthWrapper>
       <div className="orders-page-container">
         {/* Header from Design */}
-        <div className="spv-header">
-          <div className="header-icon"></div>
-          <div>
-            <div className="spv-title">SPV</div>
-            <div className="header-text">Delivery partner app</div>
-            <div className="header-text">Thanks for your service</div>
+        {/* Ribbon Header Card */}
+        <div className="px-3 pt-4 pb-2">
+          <div style={{
+            backgroundColor: "#E2DCC8",
+            borderRadius: "20px",
+            padding: "12px 20px",
+            display: "flex",
+            alignItems: "center",
+            position: "relative",
+            minHeight: "70px",
+            marginBottom: "10px",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+          }}>
+            {/* White Circle Logo */}
+            <div style={{
+              width: "45px",
+              height: "45px",
+              backgroundColor: "#fff",
+              borderRadius: "50%",
+              flexShrink: 0
+            }}></div>
+
+            {/* Centered LEEVON Text */}
+            <div style={{
+              position: "absolute",
+              left: "0",
+              right: "0",
+              textAlign: "center",
+              pointerEvents: "none"
+            }}>
+              <span style={{
+                fontSize: "24px",
+                fontWeight: "bold",
+                fontStyle: "italic",
+                fontFamily: "'Times New Roman', serif",
+                color: "#333",
+                letterSpacing: "3px",
+                textTransform: "uppercase"
+              }}>
+                LEEVON
+              </span>
+            </div>
           </div>
         </div>
 

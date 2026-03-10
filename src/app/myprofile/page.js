@@ -43,18 +43,6 @@ export default function MyProfileMenu() {
         <div className={styles.pageContainer}>
 
             <div className="container pt-4">
-                {/* Header Banner */}
-                <div className={`d-flex align-items-center justify-content-between p-3 mb-4 shadow-sm ${styles.headerBanner}`}>
-                    <div className="d-flex align-items-center">
-                        <div className={styles.logoCircle}>
-                            <span className={styles.logoText}>SPV</span>
-                        </div>
-                    </div>
-                    <div className="text-end">
-                        <p className={`m-0 fw-bold ${styles.headerTitle}`}>Delivery partner app</p>
-                        <p className={`m-0 ${styles.headerSubtitle}`}>Thanks for your service</p>
-                    </div>
-                </div>
 
                 {/* Setting Title Pill */}
                 <div className="d-flex justify-content-center">

@@ -118,25 +118,46 @@ export default function MainPage() {
 
             {/* Header */}
             <div className="p-4 pt-5 pb-3">
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                    <div className="d-flex align-items-center">
-                        <div style={{
-                            width: "50px",
-                            height: "50px",
-                            backgroundColor: "#fff",
-                            borderRadius: "50%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            boxShadow: "0 2px 5px rgba(0,0,0,0.05)"
+                {/* Ribbon Header Card */}
+                <div style={{
+                    backgroundColor: "#E2DCC8",
+                    borderRadius: "20px",
+                    padding: "12px 20px",
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                    minHeight: "70px",
+                    marginBottom: "20px",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
+                }}>
+                    {/* White Circle Logo */}
+                    <div style={{
+                        width: "45px",
+                        height: "45px",
+                        backgroundColor: "#fff",
+                        borderRadius: "50%",
+                        flexShrink: 0
+                    }}></div>
+
+                    {/* Centered LEEVON Text */}
+                    <div style={{
+                        position: "absolute",
+                        left: "0",
+                        right: "0",
+                        textAlign: "center",
+                        pointerEvents: "none"
+                    }}>
+                        <span style={{
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                            fontStyle: "italic",
+                            fontFamily: "'Times New Roman', serif",
+                            color: "#333",
+                            letterSpacing: "3px",
+                            textTransform: "uppercase"
                         }}>
-                            {/* Placeholder Logo/Icon */}
-                            <span style={{ fontSize: "20px", fontWeight: "bold", fontStyle: "italic" }}>SPV</span>
-                        </div>
-                    </div>
-                    <div className="text-end">
-                        <p className="m-0 fw-bold" style={{ fontSize: "14px", color: "#333" }}>Delivery partner app</p>
-                        <p className="m-0" style={{ fontSize: "14px", color: "#666" }}>Thanks for your service</p>
+                            LEEVON
+                        </span>
                     </div>
                 </div>
 
