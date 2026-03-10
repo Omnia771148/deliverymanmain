@@ -56,15 +56,15 @@ export default function MyDetails() {
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative",
+                padding: "10px 0",
                 marginBottom: "30px",
-                marginTop: "10px"
+                width: "100%"
             }}>
                 <button
                     onClick={() => router.back()}
                     style={{
-                        position: "fixed",
-                        top: "20px",
-                        left: "20px",
+                        position: "absolute",
+                        left: "0",
                         width: "50px",
                         height: "50px",
                         borderRadius: "50%",
@@ -74,8 +74,7 @@ export default function MyDetails() {
                         alignItems: "center",
                         justifyContent: "center",
                         boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-                        cursor: "pointer",
-                        zIndex: 1001
+                        cursor: "pointer"
                     }}
                 >
                     <i className="bi bi-arrow-left" style={{ fontSize: "24px", fontWeight: "bold" }}></i>

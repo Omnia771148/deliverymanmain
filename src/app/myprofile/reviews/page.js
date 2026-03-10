@@ -21,7 +21,7 @@ export default function MyReviews() {
 
                 const res = await fetch(`/api/myreviews?deliveryBoyId=${deliveryBoyId}`);
                 const data = await res.json();
-                
+
                 if (data.success) {
                     setReviews(data.data);
                 }
@@ -63,11 +63,11 @@ export default function MyReviews() {
                                 <div className={styles.orderIdSection}>
                                     Order ID: {review.orderId || "N/A"}
                                 </div>
-                                
+
                                 <div className={styles.ratingSection}>
                                     {[...Array(5)].map((_, i) => (
-                                        <i 
-                                            key={i} 
+                                        <i
+                                            key={i}
                                             className={`bi ${i < (review.deliveryBoyRating || 0) ? 'bi-star-fill' : 'bi-star'} ${styles.starIcon}`}
                                         ></i>
                                     ))}
