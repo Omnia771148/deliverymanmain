@@ -235,7 +235,7 @@ export default function ActiveDeliveriesPage() {
         setModal({
           show: true,
           title: "Order Completed",
-          message: "Order has been moved to completed status.",
+          message: "order is delivered successfully thankyou",
           type: "success"
         });
         // Remove from UI immediately
@@ -289,7 +289,9 @@ export default function ActiveDeliveriesPage() {
 
       {deliveries.length === 0 ? (
         <div className="ad-no-orders">
-          <div style={{ fontSize: "60px", marginBottom: "15px", opacity: 0.5 }}>�</div>
+          <div className="ad-empty-icon">
+            <i className="bi bi-bicycle"></i>
+          </div>
           <h3 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "10px" }}>No Active Deliveries</h3>
           <p style={{ opacity: 0.8 }}>You have no ongoing deliveries at the moment.</p>
         </div>

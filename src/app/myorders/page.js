@@ -97,7 +97,7 @@ export default function MyOrdersPage() {
     return (
         <div style={{
             minHeight: "100vh",
-            backgroundColor: "#FBF8F2", // Light cream page background
+            backgroundColor: "#f7f7eb", // Light cream page background
             padding: "20px",
             paddingBottom: "100px",
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
@@ -115,8 +115,9 @@ export default function MyOrdersPage() {
                 <button
                     onClick={() => window.history.back()}
                     style={{
-                        position: "absolute",
-                        left: "0",
+                        position: "fixed",
+                        top: "20px",
+                        left: "20px",
                         width: "50px",
                         height: "50px",
                         borderRadius: "50%",
@@ -125,11 +126,12 @@ export default function MyOrdersPage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                        cursor: "pointer"
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                        cursor: "pointer",
+                        zIndex: 1001
                     }}
                 >
-                    <i className="bi bi-chevron-left" style={{ fontSize: "20px", fontWeight: "bold" }}></i>
+                    <i className="bi bi-arrow-left" style={{ fontSize: "24px", fontWeight: "bold" }}></i>
                 </button>
 
                 {/* Title Pill */}

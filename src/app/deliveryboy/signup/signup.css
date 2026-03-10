@@ -31,6 +31,35 @@
     margin-bottom: 30px;
 }
 
+.signup-header-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.signup-back-btn {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    background: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.2s ease;
+}
+
+.signup-back-btn:active {
+    transform: scale(0.9);
+}
+
 .welcome-title {
     background: #fff;
     display: inline-block;
@@ -40,6 +69,13 @@
     font-size: 3rem;
     color: #333;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+@media (max-width: 600px) {
+    .signup-back-btn {
+        position: static;
+        transform: none;
+        margin-bottom: 15px;
+    }
 }
 
 .custom-input-group {

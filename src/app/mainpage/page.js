@@ -114,7 +114,7 @@ export default function MainPage() {
     }
 
     return (
-        <div style={{ backgroundColor: "#F9F7F2", minHeight: "100vh", paddingBottom: "80px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+        <div style={{ backgroundColor: "#f7f7eb", minHeight: "100vh", paddingBottom: "80px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
 
             {/* Header */}
             <div className="p-4 pt-5 pb-3">
@@ -241,17 +241,11 @@ export default function MainPage() {
                     <div className="card-body py-4">
                         <h6 className="text-center text-decoration-underline fw-bold mb-4" style={{ color: "#111" }}>Monthly record</h6>
                         <div className="row text-center align-items-center">
-                            <div className="col-5 border-end border-secondary">
+                            <div className="col-6 border-end border-secondary">
                                 <p className="mb-1 fw-bold" style={{ fontSize: "14px" }}>Total no of orders</p>
                                 <h2 className="fw-bold mb-0">{stats.totalOrders}</h2>
-                                {/* Note: Design says "Total no of orders" under Monthly Record. 
-                            Usually this means Total All Time or Monthly? 
-                            The card title is "Monthly record", but text is "Total no of orders".
-                            I'll map it to stats.totalOrders (All time) as per text, or monthOrders? 
-                            The API returns both. Let's use totalOrders for now as it says "Total".
-                        */}
                             </div>
-                            <div className="col-7">
+                            <div className="col-6">
                                 <p className="mb-1 fw-bold" style={{ fontSize: "14px" }}>Monthly earnings</p>
                                 <h2 className="fw-bold mb-0">{stats.monthlyEarnings} Rs</h2>
                             </div>

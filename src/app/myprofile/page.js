@@ -91,7 +91,7 @@ export default function MyProfileMenu() {
                             </div>
                         </Link>
 
-                      
+
                         <Link href="/contactus" className="text-decoration-none">
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
@@ -103,12 +103,13 @@ export default function MyProfileMenu() {
                         </Link>
 
                         {/* Logout Button */}
-                        <button
-                            onClick={handleLogout}
-                            className={`w-100 border-0 py-3 mt-4 shadow-sm text-center ${styles.logoutButton}`}
-                        >
-                            Logout
-                        </button>
+                        <div className={styles.logoutButton} onClick={handleLogout}>
+                            <div className={styles.logoutLeft}>
+                                <i className={`bi bi-box-arrow-right ${styles.logoutIcon}`}></i>
+                                <span>Logout</span>
+                            </div>
+                            <i className={`bi bi-caret-right-fill ${styles.logoutArrow}`}></i>
+                        </div>
                     </div>
 
                 </div>

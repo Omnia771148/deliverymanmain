@@ -223,9 +223,18 @@ export default function DeliveryBoySignup() {
       {isSubmitting && <Loading />}
       <div id="recaptcha-container"></div>
 
+      <button 
+        className="signup-back-btn" 
+        onClick={() => window.location.href = "/"}
+      >
+        <i className="bi bi-arrow-left"></i>
+      </button>
+
       <div className="signup-form-wrapper">
-        <div className="welcome-header">
-          <h1 className="welcome-title">Welcome</h1>
+        <div className="signup-header-container">
+          <div className="welcome-header">
+            <h1 className="welcome-title">Welcome</h1>
+          </div>
         </div>
 
         {errorMessage && (

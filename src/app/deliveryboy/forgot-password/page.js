@@ -142,11 +142,36 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f5f5f5", padding: "20px" }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f7f7eb", padding: "20px" }}>
             {isLoading && <Loading />}
             <div id="recaptcha-container"></div>
 
-            <div style={{ backgroundColor: "white", padding: "30px", borderRadius: "15px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", width: "100%", maxWidth: "400px" }}>
+            <div style={{ backgroundColor: "white", padding: "40px 30px", borderRadius: "25px", boxShadow: "0 10px 25px rgba(0,0,0,0.05)", width: "100%", maxWidth: "400px", position: "relative" }}>
+                
+                {/* Back Button */}
+                <button 
+                    onClick={() => window.location.href = "/"}
+                    style={{
+                        position: "fixed",
+                        top: "20px",
+                        left: "20px",
+                        backgroundColor: "white",
+                        border: "none",
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        fontSize: "1.5rem",
+                        color: "#333",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                        cursor: "pointer",
+                        zIndex: "1001"
+                    }}
+                >
+                    <i className="bi bi-arrow-left"></i>
+                </button>
 
                 <h2 style={{ textAlign: "center", marginBottom: "30px", fontSize: "24px", color: "#333" }}>
                     {step === 1 && "Forgot Password"}
@@ -227,9 +252,6 @@ export default function ForgotPassword() {
                     </form>
                 )}
 
-                <div style={{ marginTop: "20px", textAlign: "center" }}>
-                    <a href="/deliveryboy/login" style={{ textDecoration: "none", color: "#666", fontSize: "14px" }}>← Back to Login</a>
-                </div>
 
             </div>
         </div>

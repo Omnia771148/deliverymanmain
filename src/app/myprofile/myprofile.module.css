@@ -1,5 +1,5 @@
 .pageContainer {
-    background-color: #F9F7F2;
+    background-color: #f7f7eb;
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-bottom: 100px;
@@ -79,11 +79,39 @@
 }
 
 .logoutButton {
-    background-color: #E74C3C;
+    background-color: white;
+    color: #e63946;
+    border: none;
+    width: 100%;
+    padding: 15px 25px;
     border-radius: 50px;
-    font-size: 18px;
-    font-weight: 500;
-    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 25px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.logoutButton:active {
+    transform: scale(0.98);
+}
+
+.logoutLeft {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logoutIcon {
+    font-size: 1.5rem;
+}
+
+.logoutArrow {
+    font-size: 1rem;
 }
 
 /* Modal Styles */

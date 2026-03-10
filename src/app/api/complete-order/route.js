@@ -32,7 +32,17 @@ export async function POST(request) {
   try {
     await connectDB();
 
-    const body = await request.json();
+    // 1. Parse and validate request body
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return Response.json(
+        { success: false, message: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
+
     const { orderId } = body;
 
     if (!orderId) {
@@ -42,137 +52,153 @@ export async function POST(request) {
       );
     }
 
-    console.log(`Processing order completion for ID: ${orderId}`);
+    // Validate ObjectId format to prevent CastError 500
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      return Response.json(
+        { success: false, message: "Invalid Order ID format" },
+        { status: 400 }
+      );
+    }
 
-    // Use lean() for robustness and raw object access
+    console.log(`🚀 Starting order completion for ID: ${orderId}`);
+
+    // 2. Fetch the accepted order
     const order = await AcceptedByDelivery.findById(orderId).lean();
 
     if (!order) {
+      console.log(`⚠️ Order ${orderId} not found. Likely already processed.`);
       return Response.json(
-        { success: false, message: "Order not found in accepted deliveries" },
+        { success: false, message: "Order not found. It may have already been completed." },
         { status: 404 }
       );
     }
 
-    // ✅ FETCH DELIVERY BOY DETAILS (Us, else fetch)
-    // We need account details from the user collection regardless
-    let deliveryBoyName = order.deliveryBoyName || "";
+    // 3. Fetch Delivery Boy details to ensure we have bank/contact info
+    let deliveryBoyName = order.deliveryBoyName || "Delivery Boy";
     let deliveryBoyPhone = order.deliveryBoyPhone || "";
     let accountNumber = "";
     let ifscCode = "";
 
-    if (order.deliveryBoyId) {
-      const deliveryBoy = await DeliveryBoyUser.findById(order.deliveryBoyId);
-      if (deliveryBoy) {
-        deliveryBoyName = deliveryBoyName || deliveryBoy.name;
-        deliveryBoyPhone = deliveryBoyPhone || deliveryBoy.phone;
-        accountNumber = deliveryBoy.accountNumber || "";
-        ifscCode = deliveryBoy.ifscCode || "";
+    if (order.deliveryBoyId && mongoose.Types.ObjectId.isValid(order.deliveryBoyId)) {
+      try {
+        const deliveryBoy = await DeliveryBoyUser.findById(order.deliveryBoyId).lean();
+        if (deliveryBoy) {
+          deliveryBoyName = deliveryBoy.name || deliveryBoyName;
+          deliveryBoyPhone = deliveryBoy.phone || deliveryBoyPhone;
+          accountNumber = deliveryBoy.accountNumber || "";
+          ifscCode = deliveryBoy.ifscCode || "";
+        }
+      } catch (dbError) {
+        console.error("Non-critical error fetching delivery boy details:", dbError);
       }
     }
 
-    const orderData = { ...order };
-    delete orderData._id;
-
-    const completedOrderData = {
-      ...orderData,
+    // 4. Prepare data for FinalCompletedOrder
+    const orderDataForCompletion = {
+      ...order,
       completedAt: new Date(),
       status: "Completed",
       paymentStatus: "Completed",
       verificationStatus: "verified",
       verificationTime: new Date(),
-      originalAcceptedOrderId: orderId,
+      originalAcceptedOrderId: orderId.toString(),
       deliveryBoyName,
       deliveryBoyPhone,
     };
+    
+    // Remove the original _id from the lean object so FinalCompletedOrder gets its own
+    delete orderDataForCompletion._id;
 
-    const completedOrder = new FinalCompletedOrder(completedOrderData);
-    await completedOrder.save();
-
-    console.log(`✅ Order saved to FinalCompletedOrder with ID: ${completedOrder._id}`);
-
-    // ✅ SAVE TO PendingPaymentOfDeliveryBoy
-    // ✅ SAVE TO PendingPaymentOfDeliveryBoy
+    // 5. Save to FinalCompletedOrder
+    let completedOrder;
     try {
-      // Check if there is already a PENDING payment record for this delivery boy
-      // We use findOneAndUpdate with upsert to handle concurrency and atomic updates better
+      completedOrder = new FinalCompletedOrder(orderDataForCompletion);
+      await completedOrder.save();
+      console.log(`✅ Success: Moved to FinalCompletedOrder: ${completedOrder._id}`);
+    } catch (saveError) {
+      console.error("Critical error saving final order:", saveError);
+      throw new Error(`Failed to save completed order: ${saveError.message}`);
+    }
 
-      const chargeToAdd = parseFloat(order.deliveryCharge) || 0;
-
-      const updatedPayment = await PendingPaymentOfDeliveryBoy.findOneAndUpdate(
-        {
-          deliveryBoyId: order.deliveryBoyId,
-          status: "Pending"
-        },
-        {
-          // Atomically increment the charge
-          $inc: { deliveryCharge: chargeToAdd },
-
-          // Update these fields if they changed (or set them if new)
-          $set: {
-            deliveryBoyName: deliveryBoyName,
-            deliveryBoyPhone: deliveryBoyPhone,
-            accountNumber: accountNumber,
-            ifscCode: ifscCode,
-            lastCompletedOrderId: completedOrder._id,
-            updatedAt: new Date()
+    // 6. Async update PendingPaymentOfDeliveryBoy (Atomic update)
+    if (order.deliveryBoyId) {
+      try {
+        const chargeToAdd = parseFloat(order.deliveryCharge) || 0;
+        await PendingPaymentOfDeliveryBoy.findOneAndUpdate(
+          {
+            deliveryBoyId: order.deliveryBoyId,
+            status: "Pending"
           },
-
-          // Set these ONLY if creating a new document
-          $setOnInsert: {
-            createdAt: new Date()
+          {
+            $inc: { deliveryCharge: chargeToAdd },
+            $set: {
+              deliveryBoyName,
+              deliveryBoyPhone,
+              accountNumber,
+              ifscCode,
+              lastCompletedOrderId: completedOrder._id,
+              updatedAt: new Date()
+            },
+            $setOnInsert: {
+              createdAt: new Date()
+            }
+          },
+          {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true
           }
-        },
-        {
-          upsert: true, // Create if not exists
-          new: true,    // Return the updated document
-          setDefaultsOnInsert: true
-        }
-      );
-
-      console.log(`✅ Pending payment processed. New Total: ${updatedPayment.deliveryCharge}`);
-
-    } catch (paymentError) {
-      console.error("⚠️ Error saving pending payment record:", paymentError);
-      // We don't block the main success response if this fails, but logging it is important
+        );
+        console.log(`💰 Delivery charge updated: +${chargeToAdd}`);
+      } catch (paymentError) {
+        console.error("Non-critical error updating payments:", paymentError);
+        // We don't fail the whole request for a payment update error
+      }
     }
 
-    // ✅ ADD THIS: update orderstatuses
-    // ✅ CHANGED: Delete from orderstatuses instead of updating
-    await OrderStatus.deleteOne({ orderId: order.orderId });
-    console.log(`🗑️ Order deleted from orderstatuses: ${order.orderId}`);
-
-    // ✅ DELETE from AcceptedOrder (Clean up the original order now that it's completed)
-    if (order.originalOrderId) {
-      await AcceptedOrder.findByIdAndDelete(order.originalOrderId);
-      console.log(`🗑️ Original order deleted from AcceptedOrder: ${order.originalOrderId}`);
+    // 7. Cleanup tasks
+    try {
+      const cleanupPromises = [];
+      
+      // Delete from orderstatuses
+      if (order.orderId) {
+        cleanupPromises.push(OrderStatus.deleteOne({ orderId: order.orderId }));
+      }
+      
+      // Delete from AcceptedOrder
+      if (order.originalOrderId) {
+        cleanupPromises.push(AcceptedOrder.findByIdAndDelete(order.originalOrderId));
+      }
+      
+      // Delete from AcceptedByDelivery (The item being processed)
+      cleanupPromises.push(AcceptedByDelivery.findByIdAndDelete(orderId));
+      
+      await Promise.all(cleanupPromises);
+      console.log("🧹 Cleanup complete.");
+    } catch (cleanupError) {
+      console.error("Error during cleanup (non-critical):", cleanupError);
+      // Even if cleanup fails, the order is already saved to FinalCompletedOrder
     }
-
-    await AcceptedByDelivery.findByIdAndDelete(orderId);
-    console.log(`🗑️ Order deleted from AcceptedByDelivery: ${orderId}`);
 
     return Response.json(
       {
         success: true,
-        message: "Order successfully completed and moved to completed orders",
+        message: "Order completed successfully",
         data: {
           newOrderId: completedOrder._id,
-          originalOrderId: orderId,
-          status: "Completed",
-          completedAt: completedOrder.completedAt,
-          grandTotal: completedOrder.grandTotal,
-        },
+          status: "Completed"
+        }
       },
       { status: 200 }
     );
 
   } catch (error) {
-    console.error("❌ Error completing order:", error);
+    console.error("❌ CRITICAL API ERROR:", error);
     return Response.json(
       {
         success: false,
-        message: "Internal server error",
-        error: error.message,
+        message: "Something went wrong while completing the order. Please try again.",
+        details: error.message
       },
       { status: 500 }
     );

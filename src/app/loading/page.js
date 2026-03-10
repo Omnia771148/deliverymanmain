@@ -56,7 +56,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9F7F2',
+    backgroundColor: '#f7f7eb',
     position: 'fixed',
     top: 0,
     left: 0,

@@ -2,7 +2,7 @@
 /* Using colors from orderspage.css but with the requested layout changes */
 
 .ad-page-container {
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Earthy light background */
     min-height: 100vh;
     padding: 20px;
@@ -113,7 +113,7 @@
 
 /* Restaurant Section as a Separate Card */
 .ad-restaurant-section {
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Inset card look */
     padding: 10px;
     /* Reduced padding */
@@ -161,7 +161,7 @@
 .ad-earnings {
     margin-top: 5px;
     /* Drastically reduced from 15px */
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Matching items column specific background */
     padding: 10px;
     /* Reduced padding */
@@ -192,7 +192,7 @@
 /* Right Column: Items */
 .ad-items-column {
     padding: 15px;
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Page background color as requested */
     border-radius: 12px;
     /* Curve at the borders */
@@ -305,7 +305,7 @@
 }
 
 .ad-customer-details {
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Earthy light background */
     padding: 15px;
     border-radius: 12px;
@@ -325,7 +325,7 @@
 }
 
 .ad-verify-box {
-    background-color: #F8F5F0;
+    background-color: #f7f7eb;
     /* Earthy light background */
     padding: 20px;
     border-radius: 12px;
@@ -396,12 +396,31 @@
     text-align: center;
     color: #333;
     flex-grow: 1;
-    /* Take remaining height */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin: 20px 0;
+}
+
+.ad-empty-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+    opacity: 0.7;
+    animation: ad-float 4s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes ad-float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
 }
 
 /* Mobile Responsive */

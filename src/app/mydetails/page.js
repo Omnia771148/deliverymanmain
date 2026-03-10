@@ -45,7 +45,7 @@ export default function MyDetails() {
     return (
         <div style={{
             minHeight: "100vh",
-            backgroundColor: "#FBF8F2",
+            backgroundColor: "#f7f7eb",
             padding: "20px",
             paddingBottom: "100px",
             fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
@@ -62,8 +62,9 @@ export default function MyDetails() {
                 <button
                     onClick={() => router.back()}
                     style={{
-                        position: "absolute",
-                        left: "0",
+                        position: "fixed",
+                        top: "20px",
+                        left: "20px",
                         width: "50px",
                         height: "50px",
                         borderRadius: "50%",
@@ -72,11 +73,12 @@ export default function MyDetails() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                        cursor: "pointer"
+                        boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                        cursor: "pointer",
+                        zIndex: 1001
                     }}
                 >
-                    <i className="bi bi-chevron-left" style={{ fontSize: "20px", fontWeight: "bold" }}></i>
+                    <i className="bi bi-arrow-left" style={{ fontSize: "24px", fontWeight: "bold" }}></i>
                 </button>
 
                 <div style={{
