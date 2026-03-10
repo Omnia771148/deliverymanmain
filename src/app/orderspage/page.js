@@ -280,18 +280,9 @@ export default function AcceptedOrders() {
       <div className="orders-page-container">
         {/* Header from Design */}
         {/* Ribbon Header Card */}
-        <div className="px-3 pt-4 pb-2">
-          <div style={{
-            backgroundColor: "#E2DCC8",
-            borderRadius: "20px",
-            padding: "12px 20px",
-            display: "flex",
-            alignItems: "center",
-            position: "relative",
-            minHeight: "70px",
-            marginBottom: "10px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
-          }}>
+        {/* Ribbon Header Card */}
+        <div className="pt-4 pb-2">
+          <div className="ribbon-card">
             {/* White Circle Logo */}
             <div style={{
               width: "45px",
