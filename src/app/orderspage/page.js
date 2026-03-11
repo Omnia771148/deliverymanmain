@@ -18,6 +18,14 @@ export default function AcceptedOrders() {
 
   // LOGIC FROM FIRST: State to track if driver is already busy
   const [hasActiveDelivery, setHasActiveDelivery] = useState(false);
+  const [hasMobileApp, setHasMobileApp] = useState(false);
+
+  useEffect(() => {
+    const deliveryBoyId = localStorage.getItem("userId");
+    if (deliveryBoyId && localStorage.getItem(`mobileConnected_${deliveryBoyId}`) === "true") {
+      setHasMobileApp(true);
+    }
+  }, []);
 
   // RE-ADDED: track active status
   const [isActive, setIsActive] = useState(() => {
@@ -323,6 +331,33 @@ export default function AcceptedOrders() {
         {(hasActiveDelivery || hasActiveOrder) && (
           <div className="bg-red-600 text-white p-4 rounded-lg mx-4 mb-4 font-bold text-center shadow-sm">
             ⚠️ ACTIVE DELIVERY IN PROGRESS. FINISH IT TO ACCEPT NEW ORDERS.
+          </div>
+        )}
+
+        {/* Mobile App Connection Prompt */}
+        {!hasMobileApp && (
+          <div className="mobile-connect-card mx-4 mb-4" style={{ backgroundColor: "#f8f9fa", borderRadius: "10px", padding: "15px", border: "1px dashed #1E3A8A", textAlign: "center", marginBottom: "15px" }}>
+            <h5 style={{ fontWeight: 'bold' }}>📱 Stay Connected</h5>
+            <p style={{ color: '#555' }}>Get instant sound alerts and order notifications on your phone.</p>
+            <button
+              onClick={() => {
+                const id = localStorage.getItem("userId");
+                if (id) {
+                  const connectUrl = `notificationapp://register?userId=${id}`;
+                  console.log("Connecting to:", connectUrl);
+                  window.location.href = connectUrl;
+
+                  localStorage.setItem(`mobileConnected_${id}`, "true");
+                  setHasMobileApp(true);
+                  showModal("success", "Connection Sent", "If the app didn't open, ensure it is installed on your phone.");
+                } else {
+                  showModal("error", "Attention", "Please log in first");
+                }
+              }}
+              style={{ backgroundColor: '#1E3A8A', color: 'white', padding: "10px 20px", borderRadius: "25px", fontWeight: "bold", border: 'none', cursor: 'pointer' }}
+            >
+              Connect Mobile App
+            </button>
           </div>
         )}
 
