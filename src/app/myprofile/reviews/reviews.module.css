@@ -1,0 +1,132 @@
+.pageContainer {
+    background-color: #FBF8F2;
+    min-height: 100vh;
+    padding: 20px;
+    padding-bottom: 100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.headerSection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    margin-bottom: 40px;
+    margin-top: 10px;
+}
+
+.backButton {
+    position: absolute;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.backButton i {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.titlePill {
+    background-color: white;
+    padding: 12px 30px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.titlePill i {
+    font-size: 24px;
+    color: #ffc107;
+}
+
+.titlePill span {
+    font-weight: 700;
+    font-size: 20px;
+    color: #333;
+    margin: 0;
+}
+
+.reviewsContainer {
+    background-color: #E6DCC8;
+    border-radius: 40px;
+    padding: 25px;
+    max-width: 450px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reviewCard {
+    background-color: transparent;
+    padding: 0;
+}
+
+.reviewInner {
+    background-color: white;
+    border-radius: 30px;
+    padding: 18px 25px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.orderIdSection {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.ratingSection {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.starIcon {
+    color: #ffc107;
+}
+
+.ratingValue {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.reviewText {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+    font-style: italic;
+    background: #fcfbf4;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 3px solid #E2DCC8;
+}
+
+.noReviews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 100px;
+    color: #999;
+}
+
+.noReviews i {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}

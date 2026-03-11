@@ -19,6 +19,7 @@ export default function AcceptedOrders() {
   // LOGIC FROM FIRST: State to track if driver is already busy
   const [hasActiveDelivery, setHasActiveDelivery] = useState(false);
   const [hasMobileApp, setHasMobileApp] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const deliveryBoyId = localStorage.getItem("userId");
@@ -106,18 +107,23 @@ export default function AcceptedOrders() {
 
   useEffect(() => {
     // Initial fetch
-    fetchOrders();
-
-    // Set up polling every 3 seconds
-    const intervalId = setInterval(() => {
+    if (!actionLoading) {
       fetchOrders();
-    }, 3000);
+    }
 
-    // Cleanup function to clear interval when component unmounts
+    // Set up polling every 3 seconds, but only if not currently processing an action
+    let intervalId;
+    if (!actionLoading) {
+      intervalId = setInterval(() => {
+        fetchOrders();
+      }, 3000);
+    }
+
+    // Cleanup function to clear interval when component unmounts or status changes
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [fetchOrders]);
+  }, [fetchOrders, actionLoading]);
 
   // Modal State
   const [modal, setModal] = useState({
@@ -182,7 +188,7 @@ export default function AcceptedOrders() {
       return;
     }
 
-    setLoading(true);
+    setActionLoading(true);
     try {
       const res = await fetch("/api/acceptedorders/accept", {
         method: "POST",
@@ -204,15 +210,14 @@ export default function AcceptedOrders() {
       setOrders((prev) => prev.filter((o) => o._id !== orderId));
       setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
 
-      showModal("success", "Success!", "Order accepted successfully", () => {
-        router.push("/Activedeliveries");
-      });
+      // Redirect immediately to Active Deliveries
+      router.push("/Activedeliveries");
 
     } catch (err) {
       console.error(err);
       showModal("error", "Error", "Something went wrong");
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
@@ -276,25 +281,16 @@ export default function AcceptedOrders() {
     }).format(amount);
   };
 
-  if (loading) return <Loading />;
+  if (loading || actionLoading) return <Loading />;
 
   return (
     <AuthWrapper>
       <div className="orders-page-container">
         {/* Header from Design */}
         {/* Ribbon Header Card */}
-        <div className="px-3 pt-4 pb-2">
-          <div style={{
-            backgroundColor: "#E2DCC8",
-            borderRadius: "20px",
-            padding: "12px 20px",
-            display: "flex",
-            alignItems: "center",
-            position: "relative",
-            minHeight: "70px",
-            marginBottom: "10px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.05)"
-          }}>
+        {/* Ribbon Header Card */}
+        <div className="pt-4 pb-2">
+          <div className="ribbon-card">
             {/* White Circle Logo */}
             <div style={{
               width: "45px",

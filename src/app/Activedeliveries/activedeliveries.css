@@ -5,11 +5,23 @@
     background-color: #f7f7eb;
     /* Earthy light background */
     min-height: 100vh;
-    padding: 20px;
+    padding: 0;
     padding-bottom: 90px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
+}
+
+.ribbon-card {
+    background-color: #E2DCC8;
+    border-radius: 20px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-height: 70px;
+    margin: 0 15px 10px 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* Header Styling */
@@ -52,7 +64,7 @@
     background-color: #E3D5C2;
     /* Matching the orders page card color */
     border-radius: 15px;
-    margin-bottom: 15px;
+    margin: 0 15px 15px 15px;
     /* Standard spacing for main cards */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     overflow: hidden;
@@ -400,7 +412,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
+    margin: 20px 15px;
 }
 
 .ad-empty-icon {
