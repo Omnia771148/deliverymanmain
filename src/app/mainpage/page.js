@@ -120,7 +120,7 @@ export default function MainPage() {
             <div className="p-4 pt-5 pb-3">
                 {/* Ribbon Header Card */}
                 <div style={{
-                    backgroundColor: "#E2DCC8",
+                    backgroundColor: "#E3D5C2",
                     borderRadius: "20px",
                     padding: "12px 20px",
                     display: "flex",
@@ -164,7 +164,7 @@ export default function MainPage() {
                 {/* Active Toggle Card */}
                 <div
                     className="card border-0 shadow-sm mt-4 overflow-hidden"
-                    style={{ borderRadius: "20px", backgroundColor: "#E6DCCA" }}
+                    style={{ borderRadius: "20px", backgroundColor: "#E3D5C2" }}
                 >
                     <div className="card-body p-2 d-flex">
                         <div
@@ -208,7 +208,7 @@ export default function MainPage() {
                 {/* Notification Setup Card */}
                 <div
                     className="card border-0 shadow-sm mt-3 overflow-hidden"
-                    style={{ borderRadius: "20px", backgroundColor: "#fff" }}
+                    style={{ borderRadius: "20px", backgroundColor: "#E3D5C2" }}
                 >
                     <div className="card-body p-3 d-flex align-items-center justify-content-between">
                         <div>
@@ -237,7 +237,7 @@ export default function MainPage() {
                 {/* Row 1: Today Orders & Earnings */}
                 <div className="row g-3 mb-3">
                     <div className="col-6">
-                        <div className="card border-0 h-100" style={{ backgroundColor: "#E2DAC4", borderRadius: "20px" }}>
+                        <div className="card border-0 h-100" style={{ backgroundColor: "#E3D5C2", borderRadius: "20px" }}>
                             <div className="card-body text-center py-4">
                                 <h6 className="card-title text-decoration-underline mb-3" style={{ fontWeight: "bold", color: "#111" }}>Today orders</h6>
                                 <h2 className="display-4 fw-bold mb-0" style={{ color: "#111" }}>{stats.todayOrders}</h2>
@@ -245,7 +245,7 @@ export default function MainPage() {
                         </div>
                     </div>
                     <div className="col-6">
-                        <div className="card border-0 h-100" style={{ backgroundColor: "#E2DAC4", borderRadius: "20px" }}>
+                        <div className="card border-0 h-100" style={{ backgroundColor: "#E3D5C2", borderRadius: "20px" }}>
                             <div className="card-body text-center py-4">
                                 <h6 className="card-title text-decoration-underline mb-3" style={{ fontWeight: "bold", color: "#111" }}>Today earnings</h6>
                                 <h2 className="display-6 fw-bold mb-0" style={{ color: "#111" }}>
@@ -258,7 +258,7 @@ export default function MainPage() {
                 </div>
 
                 {/* Row 2: Monthly Record */}
-                <div className="card border-0 mb-4" style={{ backgroundColor: "#E2DAC4", borderRadius: "20px" }}>
+                <div className="card border-0 mb-4" style={{ backgroundColor: "#E3D5C2", borderRadius: "20px" }}>
                     <div className="card-body py-4">
                         <h6 className="text-center text-decoration-underline fw-bold mb-4" style={{ color: "#111" }}>Monthly record</h6>
                         <div className="row text-center align-items-center">

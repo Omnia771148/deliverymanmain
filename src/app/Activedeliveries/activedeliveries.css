@@ -13,7 +13,7 @@
 }
 
 .ribbon-card {
-    background-color: #E2DCC8;
+    background-color: #E3D5C2;
     border-radius: 20px;
     padding: 12px 20px;
     display: flex;
@@ -125,7 +125,7 @@
 
 /* Restaurant Section as a Separate Card */
 .ad-restaurant-section {
-    background-color: #f7f7eb;
+    background-color: #E3D5C2;
     /* Inset card look */
     padding: 10px;
     /* Reduced padding */
@@ -173,7 +173,7 @@
 .ad-earnings {
     margin-top: 5px;
     /* Drastically reduced from 15px */
-    background-color: #f7f7eb;
+    background-color: #E3D5C2;
     /* Matching items column specific background */
     padding: 10px;
     /* Reduced padding */
@@ -204,7 +204,7 @@
 /* Right Column: Items */
 .ad-items-column {
     padding: 15px;
-    background-color: #f7f7eb;
+    background-color: #E3D5C2;
     /* Page background color as requested */
     border-radius: 12px;
     /* Curve at the borders */
@@ -317,7 +317,7 @@
 }
 
 .ad-customer-details {
-    background-color: #f7f7eb;
+    background-color: #E3D5C2;
     /* Earthy light background */
     padding: 15px;
     border-radius: 12px;
@@ -337,7 +337,7 @@
 }
 
 .ad-verify-box {
-    background-color: #f7f7eb;
+    background-color: #E3D5C2;
     /* Earthy light background */
     padding: 20px;
     border-radius: 12px;

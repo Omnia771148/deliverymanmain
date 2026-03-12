@@ -18,7 +18,7 @@
 
 /* Modal Card */
 .modal-card {
-    background-color: white;
+    background-color: #E3D5C2;
     border-radius: 20px;
     padding: 30px;
     width: 85%;
@@ -126,7 +126,7 @@
     padding: 15px !important;
     display: flex !important;
     flex-direction: column !important;
-    background-color: white;
+    background-color: #E3D5C2;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }

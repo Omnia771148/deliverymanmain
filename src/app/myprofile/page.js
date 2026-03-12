@@ -79,22 +79,22 @@ export default function MyProfileMenu() {
                         </Link>
 
 
-                        <Link href="/contactus" className="text-decoration-none">
-                            <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
-                                <div className="d-flex align-items-center">
-                                    <i className={`bi bi-envelope text-black ${styles.menuIcon}`}></i>
-                                    <span className={styles.menuText}>Contact Us</span>
-                                </div>
-                                <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
-                            </div>
-                        </Link>
-
                         {/* My Reviews Link */}
                         <Link href="/myprofile/reviews" className="text-decoration-none">
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
                                     <i className={`bi bi-star-fill text-black ${styles.menuIcon}`}></i>
                                     <span className={styles.menuText}>My Reviews</span>
+                                </div>
+                                <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
+                            </div>
+                        </Link>
+
+                        <Link href="/contactus" className="text-decoration-none">
+                            <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
+                                <div className="d-flex align-items-center">
+                                    <i className={`bi bi-envelope text-black ${styles.menuIcon}`}></i>
+                                    <span className={styles.menuText}>Contact Us</span>
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>

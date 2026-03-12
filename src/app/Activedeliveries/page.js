@@ -615,7 +615,7 @@ export default function ActiveDeliveriesPage() {
           backdrop-filter: blur(2px);
         }
         .ad-modal-card {
-           background: #F8F6F1; /* Cream background from image */
+           background: #E3D5C2; /* Updated to match theme */
            width: 85%;
            max-width: 320px;
            border-radius: 25px;
