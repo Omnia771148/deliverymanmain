@@ -13,7 +13,7 @@ export async function POST(req) {
 
         const updatedUser = await DeliveryBoyUser.findByIdAndUpdate(
             userId,
-            { fcmToken },
+            { fcmToken, mobileConnected: true },
             { new: true }
         );
 

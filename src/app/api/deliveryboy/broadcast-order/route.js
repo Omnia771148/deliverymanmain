@@ -30,6 +30,12 @@ export async function POST(req) {
                 title: title || "New Order Available!",
                 body: body || "A new order is ready for pickup. Tap to view.",
             },
+            android: {
+                notification: {
+                    channelId: "orders_sound_channel_4",
+                    sound: "new_order.wav",
+                }
+            },
             data: {
                 screen: "OrdersPage" // Deep link instruction
             },
