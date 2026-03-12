@@ -19,6 +19,7 @@ const deliveryBoySchema = new mongoose.Schema(
     ifscCode: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     fcmToken: { type: String }, // To store Firebase Cloud Messaging token
+    mobileConnected: { type: Boolean, default: false }, // True once they connect the notification app
   },
   {
     collection: "deliveryboyusers",

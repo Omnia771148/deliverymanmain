@@ -23,9 +23,17 @@ export default function AcceptedOrders() {
 
   useEffect(() => {
     const deliveryBoyId = localStorage.getItem("userId");
-    if (deliveryBoyId && localStorage.getItem(`mobileConnected_${deliveryBoyId}`) === "true") {
-      setHasMobileApp(true);
-    }
+    if (!deliveryBoyId) return;
+
+    // Check from DB so it persists across all browsers/devices
+    fetch(`/api/deliveryboy/profile?userId=${deliveryBoyId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.mobileConnected) {
+          setHasMobileApp(true);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // RE-ADDED: track active status
