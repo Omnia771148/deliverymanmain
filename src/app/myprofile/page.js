@@ -52,6 +52,20 @@ export default function MyProfileMenu() {
                     </div>
                 </div>
 
+                {/* Profile Details Card */}
+                <div className="bg-white shadow-sm mb-4" style={{ borderRadius: '25px', padding: '15px 20px', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: '#333', color: 'white', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '20px', fontWeight: 'bold', marginRight: '15px' }}>
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'D'}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '18px', color: '#111', lineHeight: '1.2' }}>{user.name || "Delivery Partner"}</span>
+                        <span style={{ fontSize: '14px', color: '#888', display: 'flex', alignItems: 'center', marginTop: '2px' }}>
+                            <i className="bi bi-telephone-fill" style={{ color: '#c29a6e', marginRight: '8px', fontSize: '12px' }}></i>
+                            {user.phone || "No phone added"}
+                        </span>
+                    </div>
+                </div>
+
                 {/* Main Menu Card */}
                 <div className={`p-4 shadow-sm ${styles.mainCard}`}>
 
