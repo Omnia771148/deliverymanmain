@@ -93,10 +93,12 @@
     margin-bottom: 10px;
     /* Reduced from 20px */
     text-align: center;
-    border-bottom: 2px solid #000;
-    /* Bold black line 2px */
-    padding-bottom: 8px;
-    /* Reduced padding */
+    border-bottom: none;
+    padding: 10px;
+    /* Added padding for background */
+    background-color: #f7f7eb;
+    /* Page background color */
+    border-radius: 12px;
 }
 
 .ad-order-id span {
@@ -125,8 +127,8 @@
 
 /* Restaurant Section as a Separate Card */
 .ad-restaurant-section {
-    background-color: #E3D5C2;
-    /* Inset card look */
+    background-color: #f7f7eb;
+    /* Inset card look, matches page background */
     padding: 10px;
     /* Reduced padding */
     border-radius: 12px;
@@ -173,8 +175,8 @@
 .ad-earnings {
     margin-top: 5px;
     /* Drastically reduced from 15px */
-    background-color: #E3D5C2;
-    /* Matching items column specific background */
+    background-color: #f7f7eb;
+    /* Matching page background */
     padding: 10px;
     /* Reduced padding */
     border-radius: 12px;
@@ -204,7 +206,7 @@
 /* Right Column: Items */
 .ad-items-column {
     padding: 15px;
-    background-color: #E3D5C2;
+    background-color: #f7f7eb;
     /* Page background color as requested */
     border-radius: 12px;
     /* Curve at the borders */
@@ -317,8 +319,8 @@
 }
 
 .ad-customer-details {
-    background-color: #E3D5C2;
-    /* Earthy light background */
+    background-color: #f7f7eb;
+    /* Page background color */
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 20px;
@@ -337,8 +339,8 @@
 }
 
 .ad-verify-box {
-    background-color: #E3D5C2;
-    /* Earthy light background */
+    background-color: #f7f7eb;
+    /* Page background color */
     padding: 20px;
     border-radius: 12px;
 }

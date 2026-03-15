@@ -10,7 +10,7 @@ export default function BottomNav() {
     const isActive = (path) => pathname === path;
 
     return (
-        <nav className="fixed-bottom bg-white border-top py-3" style={{ backgroundColor: "#E2DAC4" }}>
+        <nav className="fixed-bottom py-3" style={{ backgroundColor: "#E3D5C2", borderTop: "none" }}>
             <div className="container">
                 <div className="row text-center">
                     <div className="col">

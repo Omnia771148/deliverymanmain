@@ -433,17 +433,27 @@ export default function ActiveDeliveriesPage() {
 
 
                     <div style={{ marginBottom: "20px" }}>
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '15px', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '5px' }}>Customer Details</h3>
+                      <h3 style={{ 
+                        fontSize: '1.2rem', 
+                        fontWeight: 'bold', 
+                        marginBottom: '15px', 
+                        padding: '10px', 
+                        textAlign: 'center',
+                        backgroundColor: '#f7f7eb',
+                        borderRadius: '12px'
+                      }}>Customer Details</h3>
 
                       <div className="ad-customer-details">
                         <div className="ad-detail-row">
                           <span className="ad-detail-label">Name:</span>
                           <span style={{ fontWeight: 'bold' }}>{delivery.userName || "Customer"}</span>
                         </div>
-                        <div className="ad-detail-row">
+                        <div className="ad-detail-row" style={{ alignItems: 'center', margin: '10px 0' }}>
                           <span className="ad-detail-label">Phone:</span>
                           <span>
-                            <a href={`tel:${delivery.userPhone}`} style={{ color: "inherit", textDecoration: "none", fontWeight: 'bold' }}>{delivery.userPhone || "N/A"}</a>
+                            <a href={`tel:${delivery.userPhone}`} className="ad-location-badge" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none', marginTop: 0 }}>
+                              <span style={{ marginRight: '5px' }}>📞</span> {delivery.userPhone || "N/A"}
+                            </a>
                           </span>
                         </div>
                         <div className="ad-detail-row">
@@ -470,7 +480,7 @@ export default function ActiveDeliveriesPage() {
 
                     <div className="ad-verify-box">
                       <label className="ad-verify-title">
-                        Verify Delivery (Last 5 Digits)
+                        Customer OTP
                       </label>
                       <div className="ad-verify-controls">
                         <div className="ad-otp-container">
