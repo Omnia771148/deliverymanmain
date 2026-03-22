@@ -339,7 +339,8 @@ export default function AcceptedOrders() {
               onClick={() => {
                 const id = localStorage.getItem("userId");
                 if (id) {
-                  const connectUrl = `notificationapp://register?userId=${id}`;
+                  const currentOrigin = window.location.origin;
+                  const connectUrl = `notificationapp://register?userId=${id}&url=${currentOrigin}`;
                   console.log("Connecting to:", connectUrl);
                   window.location.href = connectUrl;
 
