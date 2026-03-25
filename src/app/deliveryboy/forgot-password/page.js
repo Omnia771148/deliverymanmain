@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { auth } from "../../../../lib/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -29,20 +29,6 @@ export default function ForgotPassword() {
     const [isLoading, setIsLoading] = useState(false);
     const [confirmationResult, setConfirmationResult] = useState(null);
     const [error, setError] = useState("");
-    const [timer, setTimer] = useState(30);
-    const [canResend, setCanResend] = useState(false);
-
-    useEffect(() => {
-        let interval;
-        if (step === 2 && timer > 0) {
-            interval = setInterval(() => {
-                setTimer((prev) => prev - 1);
-            }, 1000);
-        } else if (timer === 0) {
-            setCanResend(true);
-        }
-        return () => clearInterval(interval);
-    }, [step, timer]);
 
     // Step 1: Send OTP
     const handleSendOtp = async (e) => {
@@ -72,15 +58,12 @@ export default function ForgotPassword() {
                 return;
             }
 
-            // 2. Setup Recaptcha (Clear and recreate container to avoid rendering errors)
+            // 2. Setup Recaptcha
             if (window.recaptchaVerifier) {
-                try { window.recaptchaVerifier.clear(); } catch (e) {}
+                window.recaptchaVerifier.clear();
                 window.recaptchaVerifier = null;
-            }
-            
-            const parent = document.getElementById('recaptcha-container-parent');
-            if (parent) {
-                parent.innerHTML = '<div id="recaptcha-container"></div>';
+                const container = document.getElementById('recaptcha-container');
+                if (container) container.innerHTML = '';
             }
 
             window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -91,8 +74,6 @@ export default function ForgotPassword() {
             const result = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
             setConfirmationResult(result);
             setStep(2);
-            setTimer(30);
-            setCanResend(false);
 
         } catch (err) {
             console.error("OTP Error:", err);
@@ -163,12 +144,12 @@ export default function ForgotPassword() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f7f7eb", padding: "20px" }}>
             {isLoading && <Loading />}
-            <div id="recaptcha-container-parent"><div id="recaptcha-container"></div></div>
+            <div id="recaptcha-container"></div>
 
             <div style={{ backgroundColor: "white", padding: "40px 30px", borderRadius: "25px", boxShadow: "0 10px 25px rgba(0,0,0,0.05)", width: "100%", maxWidth: "400px", position: "relative" }}>
-                
+
                 {/* Back Button */}
-                <button 
+                <button
                     onClick={() => window.location.href = "/"}
                     style={{
                         position: "fixed",
@@ -236,21 +217,6 @@ export default function ForgotPassword() {
                             />
                         </div>
                         <button type="submit" style={btnStyle}>Verify OTP</button>
-                        
-                        <div style={{ textAlign: 'center', marginTop: '15px' }}>
-                            {!canResend ? (
-                                <p style={{ color: '#666', fontSize: '14px' }}>Resend OTP in {timer}s</p>
-                            ) : (
-                                <button 
-                                    type="button" 
-                                    onClick={handleSendOtp} 
-                                    style={{ background: 'none', border: 'none', color: '#ff4d4d', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px' }}
-                                >
-                                    Resend OTP
-                                </button>
-                            )}
-                        </div>
-                        
                         <button type="button" onClick={() => setStep(1)} style={linkBtnStyle}>Change Number</button>
                     </form>
                 )}

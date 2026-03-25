@@ -59,20 +59,6 @@ export default function DeliveryBoySignup() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [timer, setTimer] = useState(30);
-  const [canResend, setCanResend] = useState(false);
-
-  useEffect(() => {
-    let interval;
-    if (isOtpSent && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setCanResend(true);
-    }
-    return () => clearInterval(interval);
-  }, [isOtpSent, timer]);
 
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -138,19 +124,11 @@ export default function DeliveryBoySignup() {
 
     setIsSendingOtp(true);
     try {
-      // Clear previous verifier and recreate container to avoid "already rendered" error
       if (window.recaptchaVerifier) {
-        try {
-          window.recaptchaVerifier.clear();
-        } catch (e) {
-          console.error("Error clearing verifier:", e);
-        }
+        window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
-      }
-
-      const parent = document.getElementById('recaptcha-container-parent');
-      if (parent) {
-        parent.innerHTML = '<div id="recaptcha-container"></div>';
+        const container = document.getElementById('recaptcha-container');
+        if (container) container.innerHTML = '';
       }
 
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -167,8 +145,6 @@ export default function DeliveryBoySignup() {
       const result = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
       setConfirmationResult(result);
       setIsOtpSent(true);
-      setTimer(30);
-      setCanResend(false);
       alert("OTP sent to your phone! Check your SMS.");
     } catch (error) {
       console.error("OTP Error:", error);
@@ -245,10 +221,10 @@ export default function DeliveryBoySignup() {
   return (
     <div className="signup-page-container">
       {isSubmitting && <Loading />}
-      <div id="recaptcha-container-parent"><div id="recaptcha-container"></div></div>
+      <div id="recaptcha-container"></div>
 
-      <button 
-        className="signup-back-btn" 
+      <button
+        className="signup-back-btn"
         onClick={() => window.location.href = "/"}
       >
         <i className="bi bi-arrow-left"></i>
@@ -422,20 +398,7 @@ export default function DeliveryBoySignup() {
             <button onClick={handleSubmit} className="signup-btn" disabled={isSubmitting}>
               {isSubmitting ? "Verifying..." : "Verify & Register"}
             </button>
-            <div className="mt-3">
-              {!canResend ? (
-                <p className="text-muted">Resend OTP in {timer}s</p>
-              ) : (
-                <button 
-                  onClick={sendOtp} 
-                  className="btn btn-link p-0" 
-                  style={{ color: '#ff4d4d', fontWeight: 'bold', textDecoration: 'none' }}
-                >
-                  Resend OTP
-                </button>
-              )}
-            </div>
-            <button onClick={() => setIsOtpSent(false)} className="btn btn-link mt-2" style={{ color: '#666' }}>
+            <button onClick={() => setIsOtpSent(false)} className="btn btn-link mt-3" style={{ color: '#666' }}>
               Change Phone Number
             </button>
           </div>
