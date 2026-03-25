@@ -59,6 +59,20 @@ export default function DeliveryBoySignup() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [timer, setTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (isOtpSent && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(interval);
+  }, [isOtpSent, timer]);
 
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -145,6 +159,8 @@ export default function DeliveryBoySignup() {
       const result = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
       setConfirmationResult(result);
       setIsOtpSent(true);
+      setTimer(30);
+      setCanResend(false);
       alert("OTP sent to your phone! Check your SMS.");
     } catch (error) {
       console.error("OTP Error:", error);
@@ -398,7 +414,20 @@ export default function DeliveryBoySignup() {
             <button onClick={handleSubmit} className="signup-btn" disabled={isSubmitting}>
               {isSubmitting ? "Verifying..." : "Verify & Register"}
             </button>
-            <button onClick={() => setIsOtpSent(false)} className="btn btn-link mt-3" style={{ color: '#666' }}>
+            <div className="mt-3">
+              {!canResend ? (
+                <p className="text-muted">Resend OTP in {timer}s</p>
+              ) : (
+                <button 
+                  onClick={sendOtp} 
+                  className="btn btn-link p-0" 
+                  style={{ color: '#ff4d4d', fontWeight: 'bold', textDecoration: 'none' }}
+                >
+                  Resend OTP
+                </button>
+              )}
+            </div>
+            <button onClick={() => setIsOtpSent(false)} className="btn btn-link mt-2" style={{ color: '#666' }}>
               Change Phone Number
             </button>
           </div>
