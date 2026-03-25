@@ -138,11 +138,19 @@ export default function DeliveryBoySignup() {
 
     setIsSendingOtp(true);
     try {
+      // Clear previous verifier and recreate container to avoid "already rendered" error
       if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (e) {
+          console.error("Error clearing verifier:", e);
+        }
         window.recaptchaVerifier = null;
-        const container = document.getElementById('recaptcha-container');
-        if (container) container.innerHTML = '';
+      }
+
+      const parent = document.getElementById('recaptcha-container-parent');
+      if (parent) {
+        parent.innerHTML = '<div id="recaptcha-container"></div>';
       }
 
       window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
@@ -237,7 +245,7 @@ export default function DeliveryBoySignup() {
   return (
     <div className="signup-page-container">
       {isSubmitting && <Loading />}
-      <div id="recaptcha-container"></div>
+      <div id="recaptcha-container-parent"><div id="recaptcha-container"></div></div>
 
       <button 
         className="signup-back-btn" 
