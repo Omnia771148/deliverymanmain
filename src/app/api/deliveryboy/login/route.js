@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import connectionToDatabase from "../../../../../lib/db";
 import DeliveryBoyUser from "../../../../../models/DeliveryBoyUser";
