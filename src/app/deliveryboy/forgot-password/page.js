@@ -5,19 +5,12 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Loading from "../../loading/page";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Great_Vibes } from "next/font/google";
 
-// Reusing icons from signup/login styles if available, or just standard SVGs
-const PhoneIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-    </svg>
-);
-
-const LockIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-    </svg>
-);
+const greatVibes = Great_Vibes({
+    weight: "400",
+    subsets: ["latin"],
+});
 
 export default function ForgotPassword() {
     const router = useRouter();
@@ -142,142 +135,227 @@ export default function ForgotPassword() {
     };
 
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "#f7f7eb", padding: "20px" }}>
+        <div style={{ minHeight: "100vh", backgroundColor: "#F9F7F1", padding: "20px", display: "flex", flexDirection: "column" }}>
             {isLoading && <Loading />}
             <div id="recaptcha-container"></div>
-
-            <div style={{ backgroundColor: "white", padding: "40px 30px", borderRadius: "25px", boxShadow: "0 10px 25px rgba(0,0,0,0.05)", width: "100%", maxWidth: "400px", position: "relative" }}>
-
-                {/* Back Button */}
+            
+            {/* Nav Row */}
+            <div style={{ position: "relative", width: "100%", height: "60px", marginBottom: "40px" }}>
                 <button
                     onClick={() => window.location.href = "/"}
                     style={{
-                        position: "fixed",
-                        top: "20px",
-                        left: "20px",
+                        position: "absolute",
+                        top: "10px",
+                        left: "10px",
                         backgroundColor: "white",
                         border: "none",
-                        width: "45px",
-                        height: "45px",
+                        width: "50px",
+                        height: "50px",
                         borderRadius: "50%",
                         fontSize: "1.5rem",
                         color: "#333",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
                         cursor: "pointer",
-                        zIndex: "1001"
+                        zIndex: "100"
                     }}
                 >
                     <i className="bi bi-arrow-left"></i>
                 </button>
+            </div>
 
-                <h2 style={{ textAlign: "center", marginBottom: "30px", fontSize: "24px", color: "#333" }}>
-                    {step === 1 && "Forgot Password"}
-                    {step === 2 && "Enter OTP"}
-                    {step === 3 && "Reset Password"}
-                </h2>
+            {/* Title Section */}
+            <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                <h1 className={greatVibes.className} style={{ fontSize: "4rem", color: "#111", margin: "0", lineHeight: "1.2" }}>
+                    Forgot Password?
+                </h1>
+                <p style={{ fontSize: "1.2rem", color: "#555", marginTop: "5px" }}>
+                    Recover your account
+                </p>
+            </div>
 
-                {error && <div className="alert alert-danger" style={{ fontSize: "14px", padding: "10px" }}>{error}</div>}
+            {error && <div className="alert alert-danger" style={{ fontSize: "14px", padding: "10px", borderRadius: "10px", margin: "0 20px 20px" }}>{error}</div>}
 
+            {/* Card Form */}
+            <div style={{
+                backgroundColor: "#E2D3C1",
+                margin: "0 10px",
+                borderRadius: "30px",
+                padding: "30px 20px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center"
+            }}>
                 {step === 1 && (
-                    <form onSubmit={handleSendOtp}>
-                        <p style={{ color: "#666", fontSize: "14px", textAlign: "center", marginBottom: "20px" }}>
-                            Enter your registered mobile number to receive an OTP.
-                        </p>
-                        <div style={{ position: "relative", marginBottom: "20px" }}>
-                            <span style={{ position: "absolute", left: "12px", top: "12px", color: "#888" }}><PhoneIcon /></span>
-                            <input
-                                type="tel"
-                                placeholder="Mobile Number"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                style={{ width: "100%", padding: "12px 12px 12px 40px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px" }}
-                                required
-                            />
-                        </div>
-                        <button type="submit" style={btnStyle}>Send OTP</button>
+                    <form onSubmit={handleSendOtp} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <input
+                            type="tel"
+                            placeholder="Phone number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                            style={{
+                                width: "100%",
+                                padding: "15px 30px",
+                                borderRadius: "30px",
+                                border: "none",
+                                outline: "none",
+                                fontSize: "1rem",
+                                color: "#333",
+                                backgroundColor: "white",
+                                marginBottom: "35px"
+                            }}
+                            required
+                        />
+                        
+                        <button type="submit" style={{
+                            backgroundColor: "white",
+                            color: "black",
+                            border: "none",
+                            padding: "12px 50px",
+                            borderRadius: "30px",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                            boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                            marginBottom: "20px"
+                        }}>
+                            Send OTP
+                        </button>
+
+                        <button type="button" disabled style={{
+                            backgroundColor: "rgba(255,255,255,0.4)",
+                            color: "#333",
+                            border: "none",
+                            padding: "12px 50px",
+                            borderRadius: "30px",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                        }}>
+                            Reset Password
+                        </button>
                     </form>
                 )}
 
                 {step === 2 && (
-                    <form onSubmit={handleVerifyOtp}>
-                        <p style={{ color: "#666", fontSize: "14px", textAlign: "center", marginBottom: "20px" }}>
+                    <form onSubmit={handleVerifyOtp} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <p style={{ color: "#555", fontSize: "0.9rem", textAlign: "center", marginBottom: "20px" }}>
                             OTP sent to +91 {phone}
                         </p>
-                        <div style={{ marginBottom: "20px" }}>
-                            <input
-                                type="text"
-                                placeholder="Enter 6-digit OTP"
-                                value={otp}
-                                onChange={(e) => setOtp(e.target.value)}
-                                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "20px", textAlign: "center", letterSpacing: "4px" }}
-                                required
-                            />
-                        </div>
-                        <button type="submit" style={btnStyle}>Verify OTP</button>
-                        <button type="button" onClick={() => setStep(1)} style={linkBtnStyle}>Change Number</button>
+                        <input
+                            type="text"
+                            placeholder="Enter 6-digit OTP"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "15px 30px",
+                                borderRadius: "30px",
+                                border: "none",
+                                outline: "none",
+                                fontSize: "1rem",
+                                color: "#333",
+                                backgroundColor: "white",
+                                marginBottom: "35px"
+                            }}
+                            required
+                        />
+                        
+                        <button type="submit" style={{
+                            backgroundColor: "white",
+                            color: "black",
+                            border: "none",
+                            padding: "12px 50px",
+                            borderRadius: "30px",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                            boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                            marginBottom: "20px"
+                        }}>
+                            Verify OTP
+                        </button>
+
+                        <button type="button" onClick={() => setStep(1)} style={{
+                            background: "none",
+                            border: "none",
+                            color: "#555",
+                            textDecoration: "underline",
+                            fontSize: "0.9rem",
+                            cursor: "pointer"
+                        }}>
+                            Change Number
+                        </button>
                     </form>
                 )}
 
                 {step === 3 && (
-                    <form onSubmit={handleResetPassword}>
-                        <p style={{ color: "#666", fontSize: "14px", textAlign: "center", marginBottom: "20px" }}>
-                            Enter your new password below.
-                        </p>
-                        <div style={{ position: "relative", marginBottom: "15px" }}>
-                            <span style={{ position: "absolute", left: "12px", top: "12px", color: "#888" }}><LockIcon /></span>
-                            <input
-                                type="password"
-                                placeholder="New Password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                style={{ width: "100%", padding: "12px 12px 12px 40px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px" }}
-                                required
-                            />
-                        </div>
-                        <div style={{ position: "relative", marginBottom: "25px" }}>
-                            <span style={{ position: "absolute", left: "12px", top: "12px", color: "#888" }}><LockIcon /></span>
-                            <input
-                                type="password"
-                                placeholder="Confirm New Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                style={{ width: "100%", padding: "12px 12px 12px 40px", borderRadius: "8px", border: "1px solid #ddd", fontSize: "16px" }}
-                                required
-                            />
-                        </div>
-                        <button type="submit" style={btnStyle}>Update Password</button>
+                    <form onSubmit={handleResetPassword} style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <input
+                            type="password"
+                            placeholder="New Password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "15px 30px",
+                                borderRadius: "30px",
+                                border: "none",
+                                outline: "none",
+                                fontSize: "1rem",
+                                color: "#333",
+                                backgroundColor: "white",
+                                marginBottom: "15px"
+                            }}
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Confirm New Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "15px 30px",
+                                borderRadius: "30px",
+                                border: "none",
+                                outline: "none",
+                                fontSize: "1rem",
+                                color: "#333",
+                                backgroundColor: "white",
+                                marginBottom: "35px"
+                            }}
+                            required
+                        />
+                        
+                        <button type="submit" style={{
+                            backgroundColor: "white",
+                            color: "black",
+                            border: "none",
+                            padding: "12px 50px",
+                            borderRadius: "30px",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                            boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                            marginBottom: "20px"
+                        }}>
+                            Update Password
+                        </button>
+                        
+                        <button type="button" disabled style={{
+                            backgroundColor: "rgba(255,255,255,0.4)",
+                            color: "#333",
+                            border: "none",
+                            padding: "12px 50px",
+                            borderRadius: "30px",
+                            fontSize: "1.1rem",
+                            fontWeight: "500",
+                        }}>
+                            Reset Password
+                        </button>
                     </form>
                 )}
-
-
             </div>
         </div>
     );
 }
 
-const btnStyle = {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#E74C3C", // Red used in login page
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    fontSize: "16px",
-    fontWeight: "600",
-    cursor: "pointer",
-    transition: "background 0.2s"
-};
-
-const linkBtnStyle = {
-    background: "none",
-    border: "none",
-    color: "#0984e3",
-    textDecoration: "underline",
-    cursor: "pointer",
-    width: "100%",
-    marginTop: "15px",
-    fontSize: "14px"
-};
