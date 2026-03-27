@@ -71,6 +71,10 @@ export default function DeliveryBoySignup() {
     const file = e.target.files[0];
     if (file) {
       setSelectedFiles((prev) => ({ ...prev, [fieldName]: file }));
+      // Clear validation error when user selects a file
+      if (validationErrors[fieldName]) {
+        setValidationErrors(prev => ({ ...prev, [fieldName]: "" }));
+      }
     }
   };
 
@@ -89,6 +93,11 @@ export default function DeliveryBoySignup() {
 
     const errors = {};
 
+    // Name validation
+    if (!form.name.trim()) {
+      errors.name = "Delivery partner name is required.";
+    }
+
     // Phone validation
     if (!/^\d{10}$/.test(form.phone)) {
       errors.phone = "Please enter a valid 10-digit phone number.";
@@ -100,28 +109,64 @@ export default function DeliveryBoySignup() {
     }
 
     // Password validation
-    const password = form.password;
-    if (password.length < 8) {
-      errors.password = "Password must be at least 8 characters long.";
-    } else if (!/[A-Z]/.test(password)) {
-      errors.password = "Password must contain at least one uppercase letter.";
-    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.password = "Password must contain at least one special character.";
+    if (!form.password) {
+      errors.password = "Password is required.";
     }
 
     // Bank Details Validation
-    if (!form.accountNumber || !form.confirmAccountNumber || !form.ifscCode) {
-      // Just visual alert for bank details for now as per previous logic, or you can add specific error fields
-      // For this request, focused on Phone/Email visual feedback
+    if (!form.accountNumber) {
+      errors.accountNumber = "Account number is required.";
+    } else if (!/^\d+$/.test(form.accountNumber)) {
+      errors.accountNumber = "Account number must contain only numbers.";
+    }
+
+    if (!form.confirmAccountNumber) {
+      errors.confirmAccountNumber = "Please confirm your account number.";
+    } else if (form.accountNumber !== form.confirmAccountNumber) {
+      errors.confirmAccountNumber = "Account numbers do not match.";
+    }
+
+    const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+    if (!form.ifscCode) {
+      errors.ifscCode = "IFSC code is required.";
+    } else if (!ifscRegex.test(form.ifscCode)) {
+      errors.ifscCode = "Invalid IFSC Code. (e.g., ABCD0123456)";
+    }
+
+    // Document Number validation
+    if (!form.aadharNumber) {
+      errors.aadharNumber = "Aadhar card number is required.";
+    } else if (!/^\d{12}$/.test(form.aadharNumber)) {
+      errors.aadharNumber = "Aadhar number must be exactly 12 digits.";
+    }
+    if (!form.licenseNumber) {
+      errors.licenseNumber = "Driving license number is required.";
+    }
+    if (!form.rcNumber) {
+      errors.rcNumber = "RC number is required.";
+    }
+
+    // File Upload validation
+    if (!selectedFiles.aadharUrl) {
+      errors.aadharUrl = "Please upload Aadhar card photo.";
+    }
+    if (!selectedFiles.licenseUrl) {
+      errors.licenseUrl = "Please upload Driving license photo.";
+    }
+    if (!selectedFiles.rcUrl) {
+      errors.rcUrl = "Please upload RC photo.";
     }
 
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
-      return;
-    }
-
-    if (form.accountNumber !== form.confirmAccountNumber) {
-      alert("Account numbers do not match! Please check and try again.");
+      // Scroll to the first error field
+      setTimeout(() => {
+        const firstErrorField = Object.keys(errors)[0];
+        const element = document.getElementsByName(firstErrorField)[0];
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
       return;
     }
 
@@ -167,16 +212,6 @@ export default function DeliveryBoySignup() {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setErrorMessage("");
-
-    if (!selectedFiles.aadharUrl || !selectedFiles.rcUrl || !selectedFiles.licenseUrl) {
-      alert("Please select all 3 photos!");
-      return;
-    }
-
-    if (!form.aadharNumber || !form.rcNumber || !form.licenseNumber) {
-      alert("Please enter numbers for all 3 documents!");
-      return;
-    }
 
     setIsSubmitting(true);
 
@@ -257,10 +292,12 @@ export default function DeliveryBoySignup() {
                 name="name"
                 placeholder="Delivery partner name"
                 onChange={handleChange}
-                className="custom-input"
+                className={`custom-input ${validationErrors.name ? 'is-invalid' : ''}`}
+                style={validationErrors.name ? { border: '1px solid red' } : {}}
                 required
               />
             </div>
+            {validationErrors.name && <div style={{ color: 'red', fontSize: '12px', marginTop: '-15px', marginBottom: '15px' }}>{validationErrors.name}</div>}
 
             <div className="custom-input-group">
               <PhoneIcon />
@@ -324,35 +361,61 @@ export default function DeliveryBoySignup() {
                 name="accountNumber"
                 type="text"
                 placeholder="Enter your account number"
-                onChange={handleChange}
-                className="custom-input"
-                style={{ paddingLeft: '20px', textAlign: 'center' }} // Center text as per pill design often implies centered or standard left. Image shows left aligned placeholder.
+                value={form.accountNumber}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  setForm({ ...form, accountNumber: val });
+                  if (validationErrors.accountNumber) {
+                    setValidationErrors({ ...validationErrors, accountNumber: "" });
+                  }
+                }}
+                className={`custom-input ${validationErrors.accountNumber ? 'is-invalid' : ''}`}
+                style={validationErrors.accountNumber ? { border: '1px solid red', paddingLeft: '20px', textAlign: 'center' } : { paddingLeft: '20px', textAlign: 'center' }}
                 required
               />
             </div>
+            {validationErrors.accountNumber && <div style={{ color: 'red', fontSize: '12px', marginTop: '-15px', marginBottom: '15px' }}>{validationErrors.accountNumber}</div>}
+
             <div className="custom-input-group">
               <input
                 name="confirmAccountNumber"
                 type="text"
                 placeholder="Confirm your account number"
-                onChange={handleChange}
+                value={form.confirmAccountNumber}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  setForm({ ...form, confirmAccountNumber: val });
+                  if (validationErrors.confirmAccountNumber) {
+                    setValidationErrors({ ...validationErrors, confirmAccountNumber: "" });
+                  }
+                }}
                 onPaste={(e) => e.preventDefault()}
-                className="custom-input"
-                style={{ paddingLeft: '20px', textAlign: 'center' }}
+                className={`custom-input ${validationErrors.confirmAccountNumber ? 'is-invalid' : ''}`}
+                style={validationErrors.confirmAccountNumber ? { border: '1px solid red', paddingLeft: '20px', textAlign: 'center' } : { paddingLeft: '20px', textAlign: 'center' }}
                 required
               />
             </div>
+            {validationErrors.confirmAccountNumber && <div style={{ color: 'red', fontSize: '12px', marginTop: '-15px', marginBottom: '15px' }}>{validationErrors.confirmAccountNumber}</div>}
+
             <div className="custom-input-group">
               <input
                 name="ifscCode"
                 placeholder="IFSC Code"
-                onChange={(e) => setForm({ ...form, ifscCode: e.target.value.toUpperCase() })}
-                className="custom-input"
-                style={{ paddingLeft: '20px', textAlign: 'center' }}
+                value={form.ifscCode}
+                onChange={(e) => {
+                  const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                  setForm({ ...form, ifscCode: val });
+                  if (validationErrors.ifscCode) {
+                    setValidationErrors({ ...validationErrors, ifscCode: "" });
+                  }
+                }}
+                className={`custom-input ${validationErrors.ifscCode ? 'is-invalid' : ''}`}
+                style={validationErrors.ifscCode ? { border: '1px solid red', paddingLeft: '20px', textAlign: 'center' } : { paddingLeft: '20px', textAlign: 'center' }}
                 maxLength="11"
                 required
               />
             </div>
+            {validationErrors.ifscCode && <div style={{ color: 'red', fontSize: '12px', marginTop: '-15px', marginBottom: '15px' }}>{validationErrors.ifscCode}</div>}
 
             {/* Proofs Section */}
             <div className="section-divider">
@@ -372,17 +435,31 @@ export default function DeliveryBoySignup() {
                   <input
                     name={item.nameField}
                     placeholder={item.ph}
-                    onChange={handleChange}
-                    className="upload-input-field"
+                    value={form[item.nameField]}
+                    onChange={(e) => {
+                      let val = e.target.value;
+                      if (item.nameField === 'aadharNumber') {
+                        val = val.replace(/\D/g, '').slice(0, 12);
+                      }
+                      setForm({ ...form, [item.nameField]: val });
+                      if (validationErrors[item.nameField]) {
+                        setValidationErrors({ ...validationErrors, [item.nameField]: "" });
+                      }
+                    }}
+                    className={`upload-input-field ${validationErrors[item.nameField] ? 'is-invalid' : ''}`}
+                    style={validationErrors[item.nameField] ? { border: '1px solid red', borderRadius: '50px' } : { borderRadius: '50px' }}
                     required
                   />
                   <input
                     type="file" accept="image/*"
+                    name={item.field}
                     onChange={(e) => handleFileChange(e, item.field)}
-                    className="form-control" // Bootstrap class for file input looks okay, or custom
-                    style={{ borderRadius: '50px' }}
+                    className={`form-control ${validationErrors[item.field] ? 'is-invalid' : ''}`}
+                    style={validationErrors[item.field] ? { border: '1px solid red', borderRadius: '50px' } : { borderRadius: '50px' }}
                   />
                 </div>
+                {validationErrors[item.nameField] && <div style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{validationErrors[item.nameField]}</div>}
+                {validationErrors[item.field] && <div style={{ color: 'red', fontSize: '12px', marginTop: '5px' }}>{validationErrors[item.field]}</div>}
               </div>
             ))}
 
