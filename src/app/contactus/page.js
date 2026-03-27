@@ -1,12 +1,25 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Loading from "../loading/page";
+import AuthWrapper from "../components/AuthWrapper";
 
 export default function ContactUs() {
     const router = useRouter();
+    const [isPageLoading, setIsPageLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsPageLoading(false), 500);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (isPageLoading) {
+        return <Loading />;
+    }
 
     return (
-        <div style={{
+        <AuthWrapper>
+            <div style={{
             minHeight: "100vh",
             backgroundColor: "#FBF8F2", // Light cream page background
             padding: "20px",
@@ -78,7 +91,8 @@ export default function ContactUs() {
             </div>
 
             {/* <BottomNav /> */}
-        </div>
+            </div>
+        </AuthWrapper>
     );
 }
 

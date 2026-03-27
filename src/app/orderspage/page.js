@@ -260,15 +260,23 @@ export default function AcceptedOrders() {
       return;
     }
 
-    await fetch("/api/acceptedorders/reject", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId, deliveryBoyId }),
-    });
+    setActionLoading(true);
+    try {
+      await fetch("/api/acceptedorders/reject", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, deliveryBoyId }),
+      });
 
-    // Update both orders states
-    setOrders((prev) => prev.filter((o) => o._id !== orderId));
-    setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
+      // Update both orders states
+      setOrders((prev) => prev.filter((o) => o._id !== orderId));
+      setFilteredOrders((prev) => prev.filter((o) => o._id !== orderId));
+    } catch (err) {
+      console.error("Reject error:", err);
+      showModal("error", "Error", "Failed to reject order.");
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // Format currency

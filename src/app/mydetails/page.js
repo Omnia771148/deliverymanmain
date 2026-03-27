@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 // import BottomNav from "../components/BottomNav";
 import Loading from "../loading/page";
+import AuthWrapper from "../components/AuthWrapper";
 
 export default function MyDetails() {
     const router = useRouter();
@@ -43,7 +44,8 @@ export default function MyDetails() {
     );
 
     return (
-        <div style={{
+        <AuthWrapper>
+            <div style={{
             minHeight: "100vh",
             backgroundColor: "#f7f7eb",
             padding: "20px",
@@ -135,7 +137,8 @@ export default function MyDetails() {
             </div>
 
             {/* <BottomNav /> */}
-        </div>
+            </div>
+        </AuthWrapper>
     );
 }
 

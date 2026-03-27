@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loading from "../loading/page";
+import AuthWrapper from "../components/AuthWrapper";
 // import BottomNav from "../components/BottomNav";
 
 export default function MainPage() {
@@ -114,7 +115,8 @@ export default function MainPage() {
     }
 
     return (
-        <div style={{ backgroundColor: "#f7f7eb", minHeight: "100vh", paddingBottom: "80px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+        <AuthWrapper>
+            <div style={{ backgroundColor: "#f7f7eb", minHeight: "100vh", paddingBottom: "80px", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
 
             {/* Header */}
             <div className="p-4 pt-5 pb-3">
@@ -256,7 +258,7 @@ export default function MainPage() {
             <br>
             </br>
             <br></br>
-            <br>    
+            <br>
             </br>
 
             {/* Bottom Navigation */}
@@ -264,5 +266,6 @@ export default function MainPage() {
             {/* <BottomNav /> */}
 
         </div>
+        </AuthWrapper>
     );
 }

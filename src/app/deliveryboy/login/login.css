@@ -25,7 +25,7 @@
 .right-pane {
     width: 50%;
     height: 100%;
-    background-color: #E0D4B8;
+    background-color: #DCD4C3;
 }
 
 .content-wrapper {
@@ -115,7 +115,7 @@
 
 .forgot-password-button {
     color: #000;
-    font-size: 0.875rem;
+    font-size: 1.0625rem;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -152,7 +152,7 @@
     border: none;
     padding: 0;
     cursor: pointer;
-    color: #000;
+    color: #800000;
 }
 
 .debug-info {
@@ -243,4 +243,35 @@
 
 .retry-button:active {
     transform: scale(0.95);
+}
+
+/* Mobile Responsive Fixes */
+@media (max-width: 768px) {
+    .split-background {
+        flex-direction: row; /* KEEP SIDE-BY-SIDE SPLIT */
+    }
+
+    .left-pane, .right-pane {
+        width: 50%;
+        height: 100%;
+    }
+
+    .hello-text {
+        font-size: 2.5rem;
+    }
+
+    .header-card {
+        padding: 0.8rem 1.5rem;
+        border-radius: 2rem;
+    }
+
+    .input-field {
+        font-size: 1rem;
+        padding: 1rem 1.25rem 1rem 3.25rem;
+    }
+
+    .login-button {
+        width: 180px;
+        font-size: 1.25rem;
+    }
 }

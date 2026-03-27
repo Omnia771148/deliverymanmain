@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 // import BottomNav from "../components/BottomNav";
+import Loading from "../loading/page";
+import AuthWrapper from "../components/AuthWrapper";
 import styles from "./myprofile.module.css";
 
 export default function MyProfileMenu() {
@@ -12,6 +14,8 @@ export default function MyProfileMenu() {
         phone: ""
     });
     const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(true);
+    const [isNavigating, setIsNavigating] = useState(false);
 
     useEffect(() => {
         const name = localStorage.getItem("deliveryBoyName");
@@ -21,6 +25,9 @@ export default function MyProfileMenu() {
             name: name || "Delivery Partner",
             phone: phone || ""
         });
+
+        const timer = setTimeout(() => setIsPageLoading(false), 500);
+        return () => clearTimeout(timer);
     }, []);
 
     const handleLogout = () => {
@@ -39,8 +46,18 @@ export default function MyProfileMenu() {
     };
 
 
+    if (isPageLoading || isNavigating) {
+        return <Loading />;
+    }
+
+    const handleMenuClick = (path) => {
+        setIsNavigating(true);
+        router.push(path);
+    };
+
     return (
-        <div className={styles.pageContainer}>
+        <AuthWrapper>
+            <div className={styles.pageContainer}>
 
             <div className="container pt-4">
 
@@ -48,7 +65,7 @@ export default function MyProfileMenu() {
                 <div className="d-flex justify-content-center">
                     <div className={`d-inline-flex align-items-center px-4 py-2 mb-4 bg-white shadow-sm ${styles.settingPill}`}>
                         <i className={`bi bi-gear-fill me-2 ${styles.settingIcon}`}></i>
-                        <span className={styles.settingText}>Setting</span>
+                        <span className={styles.settingText}>Settings</span>
                     </div>
                 </div>
 
@@ -71,7 +88,7 @@ export default function MyProfileMenu() {
 
                     <div className="d-flex flex-column gap-3">
                         {/* My Profile Link */}
-                        <Link href="/mydetails" className="text-decoration-none">
+                        <div onClick={() => handleMenuClick("/mydetails")} className="text-decoration-none" style={{ cursor: 'pointer' }}>
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
                                     <i className={`bi bi-person-fill text-black ${styles.menuIcon}`}></i>
@@ -79,10 +96,10 @@ export default function MyProfileMenu() {
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>
-                        </Link>
+                        </div>
 
                         {/* My Orders Link */}
-                        <Link href="/myorders" className="text-decoration-none">
+                        <div onClick={() => handleMenuClick("/myorders")} className="text-decoration-none" style={{ cursor: 'pointer' }}>
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
                                     <i className={`bi bi-bag-check-fill text-black ${styles.menuIcon}`}></i>
@@ -90,11 +107,11 @@ export default function MyProfileMenu() {
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>
-                        </Link>
+                        </div>
 
 
                         {/* My Reviews Link */}
-                        <Link href="/myprofile/reviews" className="text-decoration-none">
+                        <div onClick={() => handleMenuClick("/myprofile/reviews")} className="text-decoration-none" style={{ cursor: 'pointer' }}>
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
                                     <i className={`bi bi-star-fill text-black ${styles.menuIcon}`}></i>
@@ -102,9 +119,9 @@ export default function MyProfileMenu() {
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>
-                        </Link>
+                        </div>
 
-                        <Link href="/contactus" className="text-decoration-none">
+                        <div onClick={() => handleMenuClick("/contactus")} className="text-decoration-none" style={{ cursor: 'pointer' }}>
                             <div className={`d-flex align-items-center justify-content-between bg-white px-4 py-3 shadow-sm ${styles.menuItem}`}>
                                 <div className="d-flex align-items-center">
                                     <i className={`bi bi-envelope text-black ${styles.menuIcon}`}></i>
@@ -112,7 +129,7 @@ export default function MyProfileMenu() {
                                 </div>
                                 <i className={`bi bi-play-fill text-black ${styles.arrowIcon}`}></i>
                             </div>
-                        </Link>
+                        </div>
 
                         {/* Logout Button */}
                         <div className={styles.logoutButton} onClick={handleLogout}>
@@ -151,6 +168,7 @@ export default function MyProfileMenu() {
                     </div>
                 </div>
             )}
-        </div>
+            </div>
+        </AuthWrapper>
     );
 }

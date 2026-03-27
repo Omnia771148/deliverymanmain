@@ -7,15 +7,29 @@
     align-items: flex-start;
     padding: 40px 20px;
     position: relative;
-    background: linear-gradient(90deg, #fdfbf7 50%, #ded0b6 50%);
+    background: linear-gradient(90deg, #F9F7F2 50%, #DCD4C3 50%);
     font-family: 'Poppins', sans-serif;
 }
 
 @media (max-width: 768px) {
     .signup-page-container {
-        background: linear-gradient(90deg, #fdfbf7 50%, #ded0b6 50%);
-        /* Changed to 50/50 split for mobile */
-        padding: 20px 10px;
+        display: block;
+        background: linear-gradient(90deg, #F9F7F2 50%, #DCD4C3 50%);
+        padding: 60px 15px 40px 15px;
+    }
+
+    .signup-back-btn {
+        position: fixed;
+        left: 15px;
+        top: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .welcome-title {
+        font-size: 2.2rem;
+        padding: 8px 30px;
     }
 }
 
@@ -70,11 +84,11 @@
     color: #333;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
-@media (max-width: 600px) {
-    .signup-back-btn {
-        position: static;
-        transform: none;
-        margin-bottom: 15px;
+@media (max-width: 480px) {
+    .section-label {
+        padding: 8px 20px;
+        font-size: 14px;
+        white-space: nowrap;
     }
 }
 

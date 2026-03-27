@@ -59,8 +59,13 @@ export default function DeliveryBoySignup() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSendingOtp, setIsSendingOtp] = useState(false);
-
   const [validationErrors, setValidationErrors] = useState({});
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsPageLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
@@ -220,8 +225,9 @@ export default function DeliveryBoySignup() {
 
   return (
     <div className="signup-page-container">
-      {isSubmitting && <Loading />}
-      <div id="recaptcha-container"></div>
+      {(isSubmitting || isSendingOtp || isPageLoading) && <Loading />}
+      <div id="recaptcha-container" style={{ position: "fixed", zIndex: 99999 }}></div>
+
 
       <button
         className="signup-back-btn"

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Loading from "../loading/page";
+import AuthWrapper from "../components/AuthWrapper";
 // import BottomNav from "../components/BottomNav";
 
 export default function MyOrdersPage() {
@@ -38,7 +39,7 @@ export default function MyOrdersPage() {
         } catch (error) {
             console.error("Error fetching completed orders:", error);
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 500);
         }
     };
 
@@ -95,7 +96,8 @@ export default function MyOrdersPage() {
     }
 
     return (
-        <div style={{
+        <AuthWrapper>
+            <div style={{
             minHeight: "100vh",
             backgroundColor: "#f7f7eb", // Light cream page background
             padding: "20px",
@@ -298,6 +300,7 @@ export default function MyOrdersPage() {
                 )}
             </div>
             {/* <BottomNav /> */}
-        </div>
+            </div>
+        </AuthWrapper>
     );
 }

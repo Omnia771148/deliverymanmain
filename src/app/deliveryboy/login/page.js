@@ -19,6 +19,7 @@ export default function Login() {
   const [loggedInUserId, setLoggedInUserId] = useState("");
   const [isLoading, setIsLoading] = useState(true); // Added loading state
   const [showError, setShowError] = useState(false); // Error modal state
+  const [isNavigating, setIsNavigating] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -150,8 +151,15 @@ export default function Login() {
 
           {/* Forget Password */}
           <div className="forgot-password-container">
-            <button className="forgot-password-button" onClick={() => window.location.href = "/deliveryboy/forgot-password"}>
-              Forget password ?
+            <button 
+              className="forgot-password-button" 
+              onClick={() => {
+                setIsNavigating('forgot');
+                window.location.href = "/deliveryboy/forgot-password";
+              }}
+              style={isNavigating === 'forgot' ? { opacity: 0.5, color: '#8936FF', textDecoration: 'underline' } : {}}
+            >
+              Forgot password ?
             </button>
           </div>
 
@@ -169,8 +177,12 @@ export default function Login() {
         <div className="footer">
           <span>Don&rsquo;t have account? </span>
           <button
-            onClick={() => window.location.href = "/deliveryboy/signup"}
+            onClick={() => {
+              setIsNavigating('signup');
+              window.location.href = "/deliveryboy/signup";
+            }}
             className="create-account-button"
+            style={isNavigating === 'signup' ? { opacity: 0.5, color: '#8936FF', textDecoration: 'underline' } : {}}
           >
             create
           </button>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Loading from "../loading/page";
 import dynamic from "next/dynamic";
+import AuthWrapper from "../components/AuthWrapper";
 // import BottomNav from "../components/BottomNav";
 import "./activedeliveries.css";
 
@@ -277,7 +278,8 @@ export default function ActiveDeliveriesPage() {
   }
 
   return (
-    <div className="ad-page-container">
+    <AuthWrapper>
+      <div className="ad-page-container">
       {/* Header */}
       {/* Ribbon Header Card */}
       {/* Ribbon Header Card */}
@@ -715,6 +717,7 @@ export default function ActiveDeliveriesPage() {
           to { opacity: 1; transform: scale(1); }
         }
       `}</style>
-    </div>
+      </div>
+    </AuthWrapper>
   );
 }

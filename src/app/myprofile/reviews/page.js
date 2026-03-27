@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loading from "../../loading/page";
+import AuthWrapper from "../../components/AuthWrapper";
 import styles from "./reviews.module.css";
 
 export default function MyReviews() {
@@ -28,7 +29,8 @@ export default function MyReviews() {
             } catch (err) {
                 console.error("Error fetching reviews:", err);
             } finally {
-                setLoading(false);
+                // Keep loading for at least 500ms for consistent UI feel
+                setTimeout(() => setLoading(false), 500);
             }
         };
 
@@ -38,7 +40,8 @@ export default function MyReviews() {
     if (loading) return <Loading />;
 
     return (
-        <div className={styles.pageContainer}>
+        <AuthWrapper>
+            <div className={styles.pageContainer}>
             <div className={styles.headerSection}>
                 <button onClick={() => router.back()} className={styles.backButton}>
                     <i className="bi bi-chevron-left"></i>
@@ -83,5 +86,6 @@ export default function MyReviews() {
                 )}
             </div>
         </div>
+        </AuthWrapper>
     );
 }

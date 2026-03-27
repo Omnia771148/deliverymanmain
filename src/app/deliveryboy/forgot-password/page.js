@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../../../../lib/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -20,8 +20,15 @@ export default function ForgotPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(true);
     const [confirmationResult, setConfirmationResult] = useState(null);
     const [error, setError] = useState("");
+
+    // Simulate page load transition to match login page
+    useEffect(() => {
+        const timer = setTimeout(() => setIsPageLoading(false), 500);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Step 1: Send OTP
     const handleSendOtp = async (e) => {
@@ -136,9 +143,9 @@ export default function ForgotPassword() {
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "#F9F7F1", padding: "20px", display: "flex", flexDirection: "column" }}>
-            {isLoading && <Loading />}
-            <div id="recaptcha-container"></div>
-            
+            {(isPageLoading || isLoading) && <Loading />}
+            <div id="recaptcha-container" style={{ position: "fixed", zIndex: 99999 }}></div>
+
             {/* Nav Row */}
             <div style={{ position: "relative", width: "100%", height: "60px", marginBottom: "40px" }}>
                 <button
@@ -208,7 +215,7 @@ export default function ForgotPassword() {
                             }}
                             required
                         />
-                        
+
                         <button type="submit" style={{
                             backgroundColor: "white",
                             color: "black",
@@ -223,17 +230,7 @@ export default function ForgotPassword() {
                             Send OTP
                         </button>
 
-                        <button type="button" disabled style={{
-                            backgroundColor: "rgba(255,255,255,0.4)",
-                            color: "#333",
-                            border: "none",
-                            padding: "12px 50px",
-                            borderRadius: "30px",
-                            fontSize: "1.1rem",
-                            fontWeight: "500",
-                        }}>
-                            Reset Password
-                        </button>
+    
                     </form>
                 )}
 
@@ -260,7 +257,7 @@ export default function ForgotPassword() {
                             }}
                             required
                         />
-                        
+
                         <button type="submit" style={{
                             backgroundColor: "white",
                             color: "black",
@@ -326,7 +323,7 @@ export default function ForgotPassword() {
                             }}
                             required
                         />
-                        
+
                         <button type="submit" style={{
                             backgroundColor: "white",
                             color: "black",
@@ -340,18 +337,8 @@ export default function ForgotPassword() {
                         }}>
                             Update Password
                         </button>
-                        
-                        <button type="button" disabled style={{
-                            backgroundColor: "rgba(255,255,255,0.4)",
-                            color: "#333",
-                            border: "none",
-                            padding: "12px 50px",
-                            borderRadius: "30px",
-                            fontSize: "1.1rem",
-                            fontWeight: "500",
-                        }}>
-                            Reset Password
-                        </button>
+
+    
                     </form>
                 )}
             </div>
