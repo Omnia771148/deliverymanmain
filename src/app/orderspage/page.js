@@ -7,9 +7,6 @@ import "./modal.css";
 // import BottomNav from "../components/BottomNav";
 import Link from "next/link"; // Added for redirecting to mainpage if needed
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-
-const OSMMap = dynamic(() => import("../components/OSMMap"), { ssr: false });
 
 export default function AcceptedOrders() {
   const [orders, setOrders] = useState([]);
@@ -134,26 +131,9 @@ export default function AcceptedOrders() {
     onConfirm: null, //
   });
 
-  const [mapModal, setMapModal] = useState({
-    show: false,
-    lat: null,
-    lng: null,
-    title: ""
-  });
-
   const closeModal = () => {
     setModal({ ...modal, show: false });
   };
-
-
-  useEffect(() => {
-    if (mapModal.show) {
-      document.body.classList.add('map-open');
-    } else {
-      document.body.classList.remove('map-open');
-    }
-    return () => document.body.classList.remove('map-open');
-  }, [mapModal.show]);
 
   const showModal = (type, title, message, onConfirm = null) => {
     setModal({
@@ -224,7 +204,6 @@ export default function AcceptedOrders() {
   const openMap = (order) => {
     let lat = null;
     let lng = null;
-    let title = order.restaurantName || "Restaurant Location";
 
     // Priority 1: Read from restaurantLocation object
     if (order.restaurantLocation && order.restaurantLocation.lat && order.restaurantLocation.lng) {
@@ -241,12 +220,9 @@ export default function AcceptedOrders() {
     }
 
     if (lat && lng) {
-      setMapModal({
-        show: true,
-        lat,
-        lng,
-        title
-      });
+      window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, "_blank");
+    } else if (order.rest && (order.rest.startsWith("http://") || order.rest.startsWith("https://"))) {
+      window.open(order.rest, "_blank");
     } else {
       alert("Coordinates not found for this location.");
     }
@@ -473,30 +449,7 @@ export default function AcceptedOrders() {
         )}
       </div>
 
-      {/* Map Modal */}
-      {mapModal.show && (
-        <div className="modal-overlay">
-          <div className="map-modal-card">
-            <div className="d-flex justify-content-end align-items-center w-100 mb-2 px-1">
 
-              <button
-                onClick={() => setMapModal({ ...mapModal, show: false })}
-                className="btn-close"
-                style={{ fontSize: "1.2rem", border: "none", background: "none", cursor: "pointer", color: "#333" }}
-              >✕</button>
-            </div>
-
-            <div style={{ flexGrow: 1, width: '100%', minHeight: '300px' }}>
-              <OSMMap
-                lat={mapModal.lat}
-                lng={mapModal.lng}
-                title={mapModal.title}
-              />
-            </div>
-
-          </div>
-        </div>
-      )}
 
       {/* CUSTOM MODAL */}
       {modal.show && (

@@ -2,13 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Loading from "../loading/page";
-import dynamic from "next/dynamic";
 import AuthWrapper from "../components/AuthWrapper";
 // import BottomNav from "../components/BottomNav";
 import "./activedeliveries.css";
-
-// Dynamically import OSMMap to avoid SSR issues with Leaflet
-const OSMMap = dynamic(() => import("../components/OSMMap"), { ssr: false });
 
 export default function ActiveDeliveriesPage() {
   const [deliveries, setDeliveries] = useState([]);
@@ -28,13 +24,7 @@ export default function ActiveDeliveriesPage() {
     type: "success" // 'success' or 'error'
   });
 
-  // Map Modal State
-  const [mapModal, setMapModal] = useState({
-    show: false,
-    lat: null,
-    lng: null,
-    title: ""
-  });
+
 
   useEffect(() => {
     // Get delivery boy ID from localStorage
@@ -50,15 +40,7 @@ export default function ActiveDeliveriesPage() {
     }
   }, []);
 
-  // Handle hiding navbar when map is open
-  useEffect(() => {
-    if (mapModal.show) {
-      document.body.classList.add('map-open');
-    } else {
-      document.body.classList.remove('map-open');
-    }
-    return () => document.body.classList.remove('map-open');
-  }, [mapModal.show]);
+
 
   // FIRST FETCH APPROACH
   const fetchDeliveriesApproach1 = async (userId) => {
@@ -182,11 +164,8 @@ export default function ActiveDeliveriesPage() {
   const openMap = (delivery, isRestaurant = false) => {
     let lat = null;
     let lng = null;
-    let title = "";
 
     if (isRestaurant) {
-      title = delivery.restaurantName || "Restaurant Location";
-
       // 1. Try reading from restaurantLocation object
       if (delivery.restaurantLocation && delivery.restaurantLocation.lat && delivery.restaurantLocation.lng) {
         lat = parseFloat(delivery.restaurantLocation.lat);
@@ -201,20 +180,16 @@ export default function ActiveDeliveriesPage() {
         }
       }
     } else {
-      title = delivery.userName || "Delivery Location";
       if (delivery.location && delivery.location.lat && delivery.location.lng) {
-        lat = delivery.location.lat;
-        lng = delivery.location.lng;
+        lat = parseFloat(delivery.location.lat);
+        lng = parseFloat(delivery.location.lng);
       }
     }
 
     if (lat && lng) {
-      setMapModal({
-        show: true,
-        lat,
-        lng,
-        title
-      });
+      window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, "_blank");
+    } else if (isRestaurant && delivery.rest && (delivery.rest.startsWith("http://") || delivery.rest.startsWith("https://"))) {
+      window.open(delivery.rest, "_blank");
     } else {
       alert("Coordinates not found for this location.");
     }
@@ -586,30 +561,7 @@ export default function ActiveDeliveriesPage() {
         </div>
       )}
 
-      {/* Map Modal */}
-      {mapModal.show && (
-        <div className="ad-modal-overlay">
-          <div className="ad-modal-card ad-map-modal-card">
-            <div className="d-flex justify-content-end align-items-center w-100 mb-2 px-1">
 
-              <button
-                onClick={() => setMapModal({ ...mapModal, show: false })}
-                className="btn-close"
-                style={{ fontSize: "1.2rem", border: "none", background: "none", cursor: "pointer", color: "#333" }}
-              >✕</button>
-            </div>
-
-            <div style={{ flexGrow: 1, width: '100%', minHeight: '300px' }}>
-              <OSMMap
-                lat={mapModal.lat}
-                lng={mapModal.lng}
-                title={mapModal.title}
-              />
-            </div>
-
-          </div>
-        </div>
-      )}
 
       {/* Approach for spacing if needed */}
       <style jsx>{`
